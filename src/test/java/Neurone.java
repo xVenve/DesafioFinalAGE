@@ -3,15 +3,19 @@ import java.util.Random;
 public class Neurone {
     //n+1 pesos, siendo n las nauronas anteriores y el umbral el último.
     private final double[] weights;
+    private final double[] sigma;
     private final int method;
 
     /**
+     *
      * Inicialización de una neurona sin mutación.
      * @param weights: pesos de la neurona, incluido umbral
+     * @param sigma: variacion de cada peso
      * @param method: la función que operará la salida.
      */
-    public Neurone (double[] weights, int method){
+    public Neurone (double[] weights, double[] sigma, int method){
         this.weights = weights;
+        this.sigma = sigma;
         this.method = method;
     }
 
@@ -20,29 +24,17 @@ public class Neurone {
      * Genera pesos distintos aleatorios con un número aleatrorio gaussiano acotado por sigma.
      * Si weightSigma==0, no hay mutación.
      * @param n: neurona de la que desciende.
-     * @param weightSigma: acota la mutación de los pesos.
      */
-    public Neurone (Neurone n, double weightSigma){
+    public Neurone (Neurone n){
         Random random = new Random();
         double[] weights = n.getWeights();
 
-        if(weightSigma > 0)
-            for (int i=0; i<weights.length; i++)
-                weights[i] += random.nextGaussian() * weightSigma;
-
-        /* Esto mejor para mutar la red general
-        if (methodMutation > random.nextDouble()){
-            int num_methods = 4;
-            int newMethod = method;
-            do{
-                newMethod = random.nextInt(num_methods);
-            } while (newMethod != method);
-            method = newMethod;
-        }
-         */
+        for (int i=0; i<weights.length; i++)
+            weights[i] += random.nextGaussian() * n.sigma[i];
 
         this.weights = weights;
         this.method = n.method;
+        this.sigma = n.sigma;
     }
 
     /**
@@ -55,9 +47,7 @@ public class Neurone {
     /**
      * @return this.method
      */
-    public int getMethod(){
-        return this.method;
-    }
+    public int getMethod(){ return this.method; }
 
     /**
      * Toma las salidas de las neuronas de la capa anterior, realiza la función y devuelve el resultado.

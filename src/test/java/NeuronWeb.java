@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Random;
 
 
 //Inputs: (x,y) relativa del checkpoint, (vx, vy) del choche
@@ -6,41 +7,72 @@ import java.util.List;
 public class NeuronWeb {
     private final List<Neurone>[] layers;
 
-    public NeuronWeb(int inputs, int[] sizeLayers, int methodHidden, int methodOutput){
-        this.layers = new List[sizeLayers.length];
+    /**
+     * Crea la red de neuronas
+     * @param inputs: variables que se pasan de entrada.
+     * @param sizeLayers: numero de neuronas por capa oculta (tantas capas ocultas como el tamaño del array).
+     * @param outputs: numero de salidas.
+     * @param methodHidden: metodo usado en las capas ocultas.
+     * @param methodOutput: metodo usado en la ultima capa.
+     */
+    public NeuronWeb(int inputs, int[] sizeLayers, int outputs, int methodHidden, int methodOutput){
+        Random random = new Random();
+        this.layers = new List[sizeLayers.length+1];
         
         for(int i=0; i<sizeLayers.length; i++){
             for (int j=0; j<sizeLayers[i]; j++){
-                double[] weights;
+                double[] weights, sigma;
+
                 if(i==0)
                     weights = new double[inputs+1];
                 else
                     weights = new double[sizeLayers[i-1]+1];
+                sigma = new double[weights.length];
 
-                for(int k=0; k<weights.length; k++)
-                    weights[k] = Math.random()*2-1;
+                for(int k=0; k<weights.length; k++) {
+                    weights[k] = Math.random() * 2 - 1;
+                    sigma[k] = random.nextDouble();
+                }
 
-                Neurone n;
-                if(i<sizeLayers.length-1)
-                    n = new Neurone(weights, methodHidden);
-                else
-                    n = new Neurone(weights, methodOutput);
+                Neurone n = new Neurone(weights, weights, methodHidden);
                 this.layers[i].add(n);
-            }            
+            }
+        }
+
+        for (int j=0; j<outputs; j++) {
+            double[] weights, sigma;
+            weights = new double[sizeLayers[sizeLayers.length-1] + 1];
+            sigma = new double[weights.length];
+
+            for (int k = 0; k < weights.length; k++) {
+                weights[k] = Math.random() * 2 - 1;
+                sigma[k] = random.nextDouble();
+            }
+
+            Neurone n = new Neurone(weights, weights, methodOutput);
+            this.layers[layers.length - 1].add(n);
         }
     }
 
-
-    public NeuronWeb(NeuronWeb nw, GeneticAgent g){
+    /**
+     * Crea una nueva neurona mutada a partir de otra anterior.
+     * @param nw: neurona anterior.
+     */
+    public NeuronWeb(NeuronWeb nw){
         this.layers = new List[nw.layers.length];
         for (int i=0; i<layers.length; i++) {
             for(int j=0; j<nw.layers[i].size(); j++) {
-                Neurone n = new Neurone(nw.layers[i].get(j), g.weightSigma);
+                Neurone n = new Neurone(nw.layers[i].get(j));
                 this.layers[i].add(n);
             }
         }
     }
 
+
+    /**
+     * Processa los inputs y devuelve los outputs.
+     * @param input: inputs.
+     */
     public double[] process(double[] input){
         for (List<Neurone> layer : layers) {
             double[] output = new double[layer.size()];
