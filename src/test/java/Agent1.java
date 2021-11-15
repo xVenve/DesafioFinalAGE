@@ -31,7 +31,7 @@ public class Agent1 {
             if(targ.distance(current) < 4000){
                 thrust = 50;
             }
-            System.out.println(targ.x+ " " + targ.y + " " + thrust + " Agent 1"); // X Y THRUST MESSAGE
+            System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent 1"); // X Y THRUST MESSAGE
         }
     }
 
@@ -44,6 +44,10 @@ public class Agent1 {
 
         double distance(Point p) {
             return Math.sqrt((this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y));
+        }
+
+        double[] distanceVector(Point p){
+            return new double[]{(this.x - p.x), (this.y - p.y)};
         }
     }
 }

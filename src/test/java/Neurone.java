@@ -42,7 +42,7 @@ public class Neurone {
          */
 
         this.weights = weights;
-        this.method = n.getMethod();
+        this.method = n.method;
     }
 
     /**
