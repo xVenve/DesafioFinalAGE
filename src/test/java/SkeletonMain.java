@@ -3,12 +3,15 @@ import com.codingame.gameengine.runner.dto.GameResult;
 import java.util.Collections;
 
 public class SkeletonMain {
+
     public static void main(String[] args) {
         // Uncomment this section and comment the other one to create a Solo Game
         /* Solo Game */
         SoloGameRunner gameRunner = new SoloGameRunner();
         // Sets the player
         gameRunner.setAgent(Agent1.class);
+        // gameRunner.setAgent(Agent2.class);
+
         // Sets a test case
         gameRunner.setTestCase("test0.json");
 
@@ -18,7 +21,6 @@ public class SkeletonMain {
         // Start the game server
         // gameRunner.start();
         // Simulate
-        gameRunner.simulate();
         GameResult gameRunnerResult = new GameResult();
         gameRunnerResult = gameRunner.simulate();
 
@@ -26,6 +28,8 @@ public class SkeletonMain {
                 gameRunnerResult.metadata.split(":")[1].substring(1, gameRunnerResult.metadata.split(":")[1].length() - 3)
         );
 
-        int numCheckpointCollected = gameRunnerResult.summaries.size() - Collections.frequency(gameRunnerResult.summaries, "");
+        int numCheckpointCollected =
+                gameRunnerResult.summaries.size() -
+                        Collections.frequency(gameRunnerResult.summaries, "");
     }
 }
