@@ -15,7 +15,6 @@ public class AgentEE {
         }
         while (true) {
             String s = scanner.nextLine();
-            System.err.println(s);
             String[] input = s.split(" ");
             // id x y vx vy angle
             int target = Integer.parseInt(input[0]);
@@ -27,15 +26,10 @@ public class AgentEE {
             Point targ = targets.get(target);
             Point current = new Point(x, y);
 
-
             double relAngle = current.relativeAngle(angle, targ);
             double distance = current.distance(targ);
-            System.err.println(angle + "-" + relAngle + " " + distance);
-            //int thrust = rules.getThrust(targ.distance(current, relAngle));
-            int thrust = 20;
-
-
-
+            int thrust = 50; //rules.getThrust(distance, relAngle);
+            System.err.println(thrust);
             System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent EE"); // X Y THRUST MESSAGE
         }
     }
@@ -57,31 +51,23 @@ public class AgentEE {
 
         public double relativeAngle(int angle, Point p){
             // Puede dar problemas con la disposicion x e y
-            int cos = p.x-this.x, sen = p.y-this.y;
+            double cos = p.x-this.x, sen = p.y-this.y;
 
             double pAngle;
-            if (cos==0){
-                if(sen>0)
-                    pAngle = 90;
-                else
-                    pAngle = -90;
-
-            } else{
+            if(cos==0){
+                if(sen>0)   pAngle=90;
+                else    pAngle=270;
+            } else
                 pAngle = Math.atan(sen/cos);
-            }
 
-            if(cos<0)
-                pAngle = (pAngle + 180);
-            if(pAngle<0)
-                pAngle = (pAngle + 360);
+            if(sen < 0 && cos < 0)   pAngle = -pAngle-90;
+            else if (sen > 0 && cos < 0)    pAngle = pAngle+180;
+            else if (sen > 0 && cos > 0)    pAngle = 90-pAngle;
 
-            pAngle = (pAngle)%360;
-
-            return pAngle;
-            //double relativeAngle = (pAngle-angle)%360;
-            //return relativeAngle;
+            return (angle-pAngle+360)%360;
         }
     }
+
 
 
 }

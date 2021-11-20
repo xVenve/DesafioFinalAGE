@@ -1,5 +1,7 @@
 public class Rules {
     public int getThrust(double distance, double angle){
+        System.err.println("OK");
+
         double[] distanceRanges = {50, 200, 500}; //0 - 16000
         double[] angleRanges = {20, 45, 90, 270, 315, 340}; //0 - 360
         int[][] thrustInRange = { //length = distanceRanges.length+1 X angleRanges.length+1
