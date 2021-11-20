@@ -1,4 +1,10 @@
 public class Rules {
+    /**
+     * Decide la velocidad a tomar según la distancia y el ángulo.
+     * @param distance: distancia al siguiente punto.
+     * @param angle: ángulo relativo de la nave con el siguiente punto.
+     * @return thrust: la velocidad que llevará la nave.
+     */
     public int getThrust(double distance, double angle){
         double[] distanceRanges = {1000, 2000, 4000}; //0 - 16000
         double[] angleRanges = {10, 45, 90, 270, 315, 350}; //0 - 360
@@ -14,7 +20,7 @@ public class Rules {
             if (i < distanceRanges.length)
                 dr = distanceRanges[i];
 
-            if (distance < dr) {
+            if (distance < dr)
                 for (int j=0; j<angleRanges.length+1; j++){
                     double ag = 360;
                     if(j<angleRanges.length)
@@ -22,7 +28,6 @@ public class Rules {
                     if(angle<ag)
                         return thrustInRange[i][j];
                 }
-            }
         }
 
         return 0;
