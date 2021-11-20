@@ -1,5 +1,6 @@
-
 import com.codingame.gameengine.runner.SoloGameRunner;
+import com.codingame.gameengine.runner.dto.GameResult;
+import java.util.Collections;
 
 public class SkeletonMain {
     public static void main(String[] args) {
@@ -15,8 +16,16 @@ public class SkeletonMain {
         // gameRunner.addAgent("python3 /home/user/player.py");
 
         // Start the game server
-        gameRunner.start();
+        // gameRunner.start();
         // Simulate
-        //gameRunner.simulate();
+        gameRunner.simulate();
+        GameResult gameRunnerResult = new GameResult();
+        gameRunnerResult = gameRunner.simulate();
+
+        float fitness = Float.parseFloat(
+                gameRunnerResult.metadata.split(":")[1].substring(1, gameRunnerResult.metadata.split(":")[1].length() - 3)
+        );
+
+        int numCheckpointCollected = gameRunnerResult.summaries.size() - Collections.frequency(gameRunnerResult.summaries, "");
     }
 }
