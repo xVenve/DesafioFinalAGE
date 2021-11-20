@@ -13,8 +13,6 @@ public class AgentEE {
             System.err.println(line[0] + " " + line[1]);
             targets.add(new Point(Integer.parseInt(line[0]), Integer.parseInt(line[1])));
         }
-        double dist = 100000.0;
-        int z = 0;
         while (true) {
             String s = scanner.nextLine();
             System.err.println(s);
@@ -29,9 +27,12 @@ public class AgentEE {
             Point targ = targets.get(target);
             Point current = new Point(x, y);
 
-            double relAngle = current.relativeAngle(angle, targ.x, targ.y);
+
+            double relAngle = current.relativeAngle(angle, targ);
+            double distance = current.distance(targ);
+            System.err.println(angle + "-" + relAngle + " " + distance);
             //int thrust = rules.getThrust(targ.distance(current, relAngle));
-            int thrust = 100;
+            int thrust = 20;
 
 
 
@@ -54,21 +55,31 @@ public class AgentEE {
             return new double[]{(this.x - p.x), (this.y - p.y)};
         }
 
-        public double relativeAngle(int angle, int xp, int yp){
+        public double relativeAngle(int angle, Point p){
             // Puede dar problemas con la disposicion x e y
-            int cos = xp-this.x;
-            int sen = yp-this.y;
-            double tan = sen/cos;
-            double pAngle = Math.atan(tan);
+            int cos = p.x-this.x, sen = p.y-this.y;
+
+            double pAngle;
+            if (cos==0){
+                if(sen>0)
+                    pAngle = 90;
+                else
+                    pAngle = -90;
+
+            } else{
+                pAngle = Math.atan(sen/cos);
+            }
 
             if(cos<0)
-                pAngle = (pAngle + 180) % 360;
+                pAngle = (pAngle + 180);
             if(pAngle<0)
-                pAngle = (pAngle + 360) % 360;
+                pAngle = (pAngle + 360);
 
+            pAngle = (pAngle)%360;
 
-            double relativeAngle = Math.abs(angle+pAngle);
-            return relativeAngle;
+            return pAngle;
+            //double relativeAngle = (pAngle-angle)%360;
+            //return relativeAngle;
         }
     }
 
