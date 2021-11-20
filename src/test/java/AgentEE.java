@@ -28,8 +28,8 @@ public class AgentEE {
 
             double relAngle = current.relativeAngle(angle, targ);
             double distance = current.distance(targ);
-            int thrust = 50; //rules.getThrust(distance, relAngle);
-            System.err.println(thrust);
+            int thrust = rules.getThrust(distance, relAngle);
+            System.err.println("Distance: " + (int) distance + "\nAngle: " + (int) relAngle + "\nThrust: " + thrust);
             System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent EE"); // X Y THRUST MESSAGE
         }
     }
