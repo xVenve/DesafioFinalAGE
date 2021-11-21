@@ -1,35 +1,77 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 public class Rules {
-    /**
-     * Decide la velocidad a tomar según la distancia y el ángulo.
-     * @param distance: distancia al siguiente punto.
-     * @param angle: ángulo relativo de la nave con el siguiente punto.
-     * @return thrust: la velocidad que llevará la nave.
-     */
-    public int getThrust(double distance, double angle){
-        double[] distanceRanges = {1000, 2000, 4000}; //0 - 16000
-        double[] angleRanges = {10, 45, 90, 270, 315, 350}; //0 - 360
-        int[][] thrustInRange = { //length = distanceRanges.length+1 X angleRanges.length+1
-                {10, 5, 5, 0, 5, 5, 10},
-                {50, 40, 40, 0, 40, 40, 50},
-                {100, 70, 50, 0, 50, 70, 100},
-                {200, 150, 100, 0, 100, 150, 200},
-            }; //0 - 200
 
-        for (int i=0; i<distanceRanges.length+1; i++) {
-            double dr = 160000;
-            if (i < distanceRanges.length)
-                dr = distanceRanges[i];
+  private double[] distanceRanges; // 0 - 16000
+  private double[] angleRanges; // 0 - 360
+  private int[][] thrustInRange; // 0 - 200
 
-            if (distance < dr)
-                for (int j=0; j<angleRanges.length+1; j++){
-                    double ag = 360;
-                    if(j<angleRanges.length)
-                        ag = angleRanges[j];
-                    if(angle<ag)
-                        return thrustInRange[i][j];
-                }
-        }
+  public Rules() {
+    this.getRanges();
+  }
 
-        return 0;
+  // Read Ranges from file chromosome.csv
+  private void getRanges() {
+    try {
+      FileReader fileReader = new FileReader("chromosome.csv");
+      BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+      String distanceRangesLine = bufferedReader.readLine();
+      int numDistanceRanges = distanceRangesLine.split(",").length;
+      this.distanceRanges = convertToDouble(distanceRangesLine.split(","));
+
+      String angleRangesLine = bufferedReader.readLine();
+      int numAngleRanges = angleRangesLine.split(",").length;
+      this.angleRanges = convertToDouble(angleRangesLine.split(","));
+
+      this.thrustInRange = new int[numDistanceRanges + 1][numAngleRanges + 1];
+      for (int i = 0; i < numDistanceRanges + 1; i++) {
+        this.thrustInRange[i] = convertToInt(bufferedReader.readLine().split(","));
+      }
+
+      bufferedReader.close();
+    } catch (Exception e) {
+      System.err.println(e);
     }
+  }
+
+  // Convert String[] to double[]
+  private double[] convertToDouble(String[] values) {
+    double[] convertedValues = new double[values.length];
+    for (int i = 0; i < values.length; i++) {
+      convertedValues[i] = Double.parseDouble(values[i]);
+    }
+    return convertedValues;
+  }
+
+  // Convert String[] to int[]
+  private int[] convertToInt(String[] values) {
+    int[] convertedValues = new int[values.length];
+    for (int i = 0; i < values.length; i++) {
+      convertedValues[i] = Integer.parseInt(values[i]);
+    }
+    return convertedValues;
+  }
+
+  /**
+   * Decide la velocidad a tomar según la distancia y el ángulo.
+   * @param distance: distancia al siguiente punto.
+   * @param angle: ángulo relativo de la nave con el siguiente punto.
+   * @return thrust: la velocidad que llevará la nave.
+   */
+  public int getThrust(double distance, double angle) {
+    for (int i = 0; i < this.distanceRanges.length + 1; i++) {
+      double dr = 160000;
+      if (i < this.distanceRanges.length) dr = this.distanceRanges[i];
+
+      if (distance < dr) for (int j = 0; j < this.angleRanges.length + 1; j++) {
+        double ag = 360;
+        if (j < this.angleRanges.length) ag = this.angleRanges[j];
+        if (angle < ag) return this.thrustInRange[i][j];
+      }
+    }
+
+    return 0;
+  }
 }

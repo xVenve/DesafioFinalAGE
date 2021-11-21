@@ -9,7 +9,7 @@ public class SkeletonMain {
     /* Solo Game */
     SoloGameRunner gameRunner = new SoloGameRunner();
     // Sets the player
-    gameRunner.setAgent(AgentCSV.class);
+    gameRunner.setAgent(AgentEE.class);
     // gameRunner.setAgent(Agent2.class);
 
     // Sets a test case
@@ -33,5 +33,7 @@ public class SkeletonMain {
     int numCheckpointCollected =
       gameRunnerResult.summaries.size() -
       Collections.frequency(gameRunnerResult.summaries, "");
+    
+    System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
   }
 }
