@@ -23,17 +23,10 @@ public class SkeletonMain {
     // Simulate
     GameResult gameRunnerResult = new GameResult();
     gameRunnerResult = gameRunner.simulate();
+    
+    OnePlusOne evolutivo = new OnePlusOne();
+    evolutivo.getFitness(gameRunnerResult);
 
-    // Basic Fitness function, game score
-    float fitness = Float.parseFloat(
-      gameRunnerResult.metadata.split(":")[1].substring(1, gameRunnerResult.metadata.split(":")[1].length() - 3)
-    );
     
-    // Number of Checkpoints collected
-    int numCheckpointCollected =
-      gameRunnerResult.summaries.size() -
-      Collections.frequency(gameRunnerResult.summaries, "");
-    
-    System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
   }
 }
