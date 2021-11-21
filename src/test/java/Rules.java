@@ -5,7 +5,7 @@ public class Rules {
 
   private double[] distanceRanges; // 0 - 16000
   private double[] angleRanges; // 0 - 360
-  private int[][] thrustInRange; // 0 - 200
+  private double[][] thrustInRange; // 0 - 200
 
   public Rules() {
     this.getRanges();
@@ -25,9 +25,9 @@ public class Rules {
       int numAngleRanges = angleRangesLine.split(",").length;
       this.angleRanges = convertToDouble(angleRangesLine.split(","));
 
-      this.thrustInRange = new int[numDistanceRanges + 1][numAngleRanges + 1];
+      this.thrustInRange = new double[numDistanceRanges + 1][numAngleRanges + 1];
       for (int i = 0; i < numDistanceRanges + 1; i++) {
-        this.thrustInRange[i] = convertToInt(bufferedReader.readLine().split(","));
+        this.thrustInRange[i] = convertToDouble(bufferedReader.readLine().split(","));
       }
 
       bufferedReader.close();
@@ -45,22 +45,13 @@ public class Rules {
     return convertedValues;
   }
 
-  // Convert String[] to int[]
-  private int[] convertToInt(String[] values) {
-    int[] convertedValues = new int[values.length];
-    for (int i = 0; i < values.length; i++) {
-      convertedValues[i] = Integer.parseInt(values[i]);
-    }
-    return convertedValues;
-  }
-
   /**
    * Decide la velocidad a tomar según la distancia y el ángulo.
    * @param distance: distancia al siguiente punto.
    * @param angle: ángulo relativo de la nave con el siguiente punto.
    * @return thrust: la velocidad que llevará la nave.
    */
-  public int getThrust(double distance, double angle) {
+  public double getThrust(double distance, double angle) {
     for (int i = 0; i < this.distanceRanges.length + 1; i++) {
       double dr = 160000;
       if (i < this.distanceRanges.length) dr = this.distanceRanges[i];

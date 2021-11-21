@@ -29,7 +29,7 @@ public class AgentEE {
             //Calcula distancia al siguiente punto y ángulo relativo de la nave con el siguiente punto
             double distance = current.distance(targ);
             double relAngle = current.relativeAngle(angle, targ);
-            int thrust = rules.getThrust(distance, relAngle);
+            int thrust = (int) rules.getThrust(distance, relAngle);
             System.err.println("Distance: " + (int) distance + "\nAngle: " + (int) relAngle + "\nThrust: " + thrust);
 
             System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent EE"); // X Y THRUST MESSAGE

@@ -1,6 +1,5 @@
 import com.codingame.gameengine.runner.SoloGameRunner;
 import com.codingame.gameengine.runner.dto.GameResult;
-import java.util.Collections;
 
 public class SkeletonMain {
 
@@ -23,10 +22,8 @@ public class SkeletonMain {
     // Simulate
     GameResult gameRunnerResult = new GameResult();
     gameRunnerResult = gameRunner.simulate();
-    
+
     OnePlusOne evolutivo = new OnePlusOne();
     evolutivo.getFitness(gameRunnerResult);
-
-    
   }
 }
