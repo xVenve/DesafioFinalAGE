@@ -11,7 +11,10 @@ public class Rules {
     this.getRanges();
   }
 
-  // Read Ranges from file chromosome.csv
+  /**
+   * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
+   * Fichero: chromosome.csv
+   */
   private void getRanges() {
     try {
       FileReader fileReader = new FileReader("chromosome.csv");
@@ -36,7 +39,11 @@ public class Rules {
     }
   }
 
-  // Convert String[] to double[]
+  /**
+   * Convierte la entrada String del csv a un array de double.
+   * @param values: valores del csv en formato String.
+   * @return convertedValues: array de valores en formato double.
+   */
   private double[] convertToDouble(String[] values) {
     double[] convertedValues = new double[values.length];
     for (int i = 0; i < values.length; i++) {
@@ -62,7 +69,6 @@ public class Rules {
         if (angle < ag) return this.thrustInRange[i][j];
       }
     }
-
     return 0;
   }
 }

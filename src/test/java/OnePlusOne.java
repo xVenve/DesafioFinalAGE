@@ -9,7 +9,10 @@ import java.util.Collections;
 
 public class OnePlusOne {
 
-  // Gets the chromosome from the CSV to use it locally
+  /**
+   * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
+   * Fichero: chromosome.csv
+   */
   private Chromosome getChromosome(Chromosome chromosome) {
     try {
       FileReader fileReader = new FileReader("chromosome.csv");
@@ -37,7 +40,11 @@ public class OnePlusOne {
     return chromosome;
   }
 
-  // Convert String[] to double[]
+  /**
+   * Convierte la entrada String del csv a un array de double.
+   * @param values: valores del csv en formato String.
+   * @return convertedValues: array de valores en formato double.
+   */
   private double[] convertToDouble(String[] values) {
     double[] convertedValues = new double[values.length];
     for (int i = 0; i < values.length; i++) {
@@ -46,7 +53,11 @@ public class OnePlusOne {
     return convertedValues;
   }
 
-  // Write the chromosome to the CSV
+  /**
+   * Guarda la información de un cromosoma en formato csv.
+   * Fichero: chromosome.csv.
+   * @param chromosome: cromosoma que se escribe en fichero.
+   */
   private void writeChromosome(Chromosome chromosome) {
     FileWriter myWriter;
     try {
@@ -81,15 +92,16 @@ public class OnePlusOne {
     }
   }
 
+  /**
+   * Devuelve el fitness del individuo en función de la partida.
+   * @param gameRunnerResult: relustado de la partida.
+   * @return fitness: puntuación del individuo.
+   */
   public float getFitness(GameResult gameRunnerResult) {
     // Basic Fitness function, game score
     float fitness = Float.parseFloat(
-      gameRunnerResult.metadata
-        .split(":")[1].substring(
-          1,
-          gameRunnerResult.metadata.split(":")[1].length() - 3
-        )
-    );
+      gameRunnerResult.metadata.split(":")[1].substring(
+          1, gameRunnerResult.metadata.split(":")[1].length() - 3));
 
     // Number of Checkpoints collected
     int numCheckpointCollected =
