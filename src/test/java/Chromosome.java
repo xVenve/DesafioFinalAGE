@@ -9,7 +9,10 @@ public class Chromosome {
     public double[][] thrustInRange; // 0 - 200
     public double variance; //varianza asociada 
 
-
+    public Chromosome() {
+    	
+    }
+    
     //Constructor de cromosoma para asociarle valores inicializados en 1+1 aleatoriamente 
     public Chromosome(double[] distanceRanges, double[] angleRanges, double[][] thrustInRange, double variance) {
         this.distanceRanges = distanceRanges; 
