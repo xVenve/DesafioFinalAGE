@@ -7,7 +7,17 @@ public class Chromosome {
     public double[] distanceRanges; // 0 - 16000
     public double[] angleRanges; // 0 - 360
     public double[][] thrustInRange; // 0 - 200
+    public double variance; //varianza asociada 
 
+
+    //Constructor de cromosoma para asociarle valores inicializados en 1+1 aleatoriamente 
+    public Chromosome(double[] distanceRanges, double[] angleRanges, double[][] thrustInRange, double variance) {
+        this.distanceRanges = distanceRanges; 
+        this.angleRanges = angleRanges; 
+        this.thrustInRange = thrustInRange; 
+        this.variance = variance;  
+    
+    }
     /**
      * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
      * Fichero: chromosome.csv

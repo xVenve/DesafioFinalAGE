@@ -6,8 +6,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Arrays;
 
 public class OnePlusOne {
+
+  Chromosome chromosome = new Chromosome();
+  int contador;
+  int num_mejoras;
+  int fitness;
 
   /**
    * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
@@ -94,7 +100,7 @@ public class OnePlusOne {
 
   /**
    * Devuelve el fitness del individuo en función de la partida.
-   * @param gameRunnerResult: relustado de la partida.
+   * @param gameRunnerResult: resultado de la partida.
    * @return fitness: puntuación del individuo.
    */
   public float getFitness(GameResult gameRunnerResult) {
@@ -114,4 +120,117 @@ public class OnePlusOne {
 
     return fitness;
   }
+
+ 
+   public void initialize(){
+    Random rand = new Random();
+    //Inicializacion de la varianza, solo se utilizará un valor de varianza 
+    int mean = 5;
+    int standard_desviation = 20;
+    int variance = mean + rand.nextGaussian()* standard_desviation;
+    this.contador = 0;
+    this.num_mejoras = 0;
+
+    //Inicialización del vector de rangos de distancias 
+    double [] distanceRanges = new double [3];
+    double distanceMin = 0.0;
+    double distanceMax = 4000.0;
+
+    for (int i = 0; i < distanceRanges.length(); i++){
+      distanceRanges[i] = distanceMin + (distanceMax-distanceMin) * rand.nextDouble();
+    }
+
+   //Inicialización del vector de rangos de angulos 
+    double [] angleRanges = new double [6];
+    double angleMin = 0.0;
+    double angleMax = 360.0;   
+
+    for (int i = 0; i < angleRanges.length(); i++){
+      angleRanges[i] = angleMin + (angleMax-angleMin) * rand.nextDouble();
+    }
+
+    //Inicialización matriz de aceleración 
+    double [][] thrustInRange = new double [7][4];
+    double thrustMin = 0.0;
+    double thrustMax = 200.0;
+    for (int i = 0; i < this.chromosome.thrustInRange.length(); i++){
+      for (int j = 0; j< this.chromosome.thrustInRange[i].length(); i++){
+        thrustInRange[i][j] = thrustMin + (thrustMax - thrustMin) * rand.nextDouble;
+      }
+    }
+
+    //Asignacion de los valores aleatorizados a un objeto de tipo chromosome
+    Chromosome c = new Chromosome(distanceRanges, angleRanges, thrustInRange, variance);
+
+    writeChromosome(c);
+
+    SoloGameRunner gameRunner = new SoloGameRunner();
+    gameRunner.setAgent(AgentEE.class);
+    gameRunner.setTestCase("test0.json");
+    GameResult gameRunnerResult = new GameResult();
+    gameRunnerResult = gameRunner.simulate();
+    this.fitness = getFitness(gameRunnerResult);
+    
+
+  }
+  
+  public void mutacion(){
+    Chromosome mutado = new Chromosome(/*path al cromosoma*/ );
+
+    for (int i = 0; i < this.chromosome.distanceRanges.length(); i++){
+      mutado.distanceRanges[i] = this.chromosome.distanceRanges[i] + rand.nextGaussian() * this.chromosome.variance;
+      Arrays.sort(mutado.distanceRanges)
+    }
+    
+    for (int i = 0; i < this.chromosome.angleRanges.length(); i++){
+      mutado.angleRanges[i] = (this.chromosome.angleRanges[i] + rand.nextGaussian() * this.chromosome.variance)%360;
+      Arrays.sort(mutado.angleRanges)
+    }
+
+    for (int i = 0; i < this.chromosome.thrustInRange.length(); i++){
+      for (int j = 0; j< this.chromosome.thrustInRange[i].length(); i++){
+        mutado.thrustInRange[i][j] = this.chromosome.thrustInRange[i][j] + rand.nextGaussian() * this.chromosome.variance;
+      }
+    }
+
+    writeChromosome(mutado);
+
+    SoloGameRunner gameRunner = new SoloGameRunner();
+    gameRunner.setAgent(AgentEE.class);
+    gameRunner.setTestCase("test0.json");
+    GameResult gameRunnerResult = new GameResult();
+    gameRunnerResult = gameRunner.simulate();
+    float fitness_mutado = getFitness(gameRunnerResult);
+
+    if (this.fitness > fitness_mutado){
+      this.fitness = fitness_mutado;
+      this.chromosome = mutado;
+      this.num_mejoras++;
+    }else{
+      writeChromosome(this.chromosome);
+    }
+
+    this.contador++;
+
+    if(this.contador % 10 == 0){
+      mutacionVarianza()
+    }
+    
+    return mutado;
+
+  }
+
+
+  public void mutacionVarianza(){
+    float c = 0.82
+
+    if (this.num_mejoras < 2){
+      this.chromosome.variance *= c;
+    }
+    if (this.num_mejoras > 2){
+      this.chromosome.variance /= c;
+    }
+     this.num_mejoras = 0;
+  }
+
 }
