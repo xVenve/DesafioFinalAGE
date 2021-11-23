@@ -25,5 +25,15 @@ public class SkeletonMain {
 
     OnePlusOne evolutivo = new OnePlusOne();
     evolutivo.getFitness(gameRunnerResult);
+    /*
+    * Toma el primer cromosoma y crea 5 idénticos.
+    * En la carpeta files.
+     */
+    Chromosome chromosome = new Chromosome("files/chromosome0.csv");
+    for(int i=0; i<6; i++) {
+      String file = "files/chromosome" + i + ".csv";
+      System.err.println(file);
+      chromosome.writeChromosome(file);
+    }
   }
 }

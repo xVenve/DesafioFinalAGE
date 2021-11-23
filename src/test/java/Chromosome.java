@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Chromosome {
     public double[] distanceRanges; // 0 - 16000
@@ -12,6 +14,7 @@ public class Chromosome {
      */
     public Chromosome(String file) {
         try {
+            System.err.println(file);
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
@@ -44,6 +47,44 @@ public class Chromosome {
         for (int i = 0; i < values.length; i++)
             convertedValues[i] = Double.parseDouble(values[i]);
         return convertedValues;
+    }
+
+    /**
+     * Guarda la información de un cromosoma en formato csv.
+     * @param file: fichero en el que se copia el individuo.
+     */
+    public void writeChromosome(String file) {
+        FileWriter myWriter;
+        try {
+            myWriter = new FileWriter(file);
+            for (int i = 0; i < this.distanceRanges.length; i++) {
+                if (i == this.distanceRanges.length - 1) {
+                    myWriter.write(this.distanceRanges[i] + "\n");
+                } else {
+                    myWriter.write(this.distanceRanges[i] + ",");
+                }
+            }
+            for (int i = 0; i < this.angleRanges.length; i++) {
+                if (i == this.angleRanges.length - 1) {
+                    myWriter.write(this.angleRanges[i] + "\n");
+                } else {
+                    myWriter.write(this.angleRanges[i] + ",");
+                }
+            }
+            for (int i = 0; i < this.thrustInRange.length; i++) {
+                for (int j = 0; j < this.thrustInRange[i].length; j++) {
+                    if (j == this.thrustInRange[i].length - 1) {
+                        myWriter.write(this.thrustInRange[i][j] + "\n");
+                    } else {
+                        myWriter.write(this.thrustInRange[i][j] + ",");
+                    }
+                }
+            }
+            myWriter.flush();
+            myWriter.close();
+        } catch (IOException e) {
+            System.err.println(e);
+        }
     }
 }
 
