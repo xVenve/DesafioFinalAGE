@@ -5,6 +5,7 @@ public class AgentEE {
     // This agent slows down from 200 to 50 when is at 4000 units before reaching the checkpoint
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Chromosome solution = new Chromosome("chromosome.csv");
         Rules rules = new Rules();
         int checkpoints = Integer.parseInt(scanner.nextLine());
         ArrayList<Point> targets = new ArrayList<>();
@@ -29,7 +30,7 @@ public class AgentEE {
             //Calcula distancia al siguiente punto y ángulo relativo de la nave con el siguiente punto
             double distance = current.distance(targ);
             double relAngle = current.relativeAngle(angle, targ);
-            int thrust = (int) rules.getThrust(distance, relAngle);
+            int thrust = (int) rules.getThrust(distance, relAngle, solution);
             System.err.println("Distance: " + (int) distance + "\nAngle: " + (int) relAngle + "\nThrust: " + thrust);
 
             System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent EE"); // X Y THRUST MESSAGE
@@ -46,12 +47,6 @@ public class AgentEE {
         double distance(Point p) {
             return Math.sqrt((this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y));
         }
-
-        /*
-        double[] distanceVector(Point p){
-            return new double[]{(this.x - p.x), (this.y - p.y)};
-        }
-         */
 
         /**
          * Calcula el ángulo relativo de la nave con el siguiente punto.
@@ -78,6 +73,30 @@ public class AgentEE {
 
             // Retorna la diferencia del ángulo de la nave y del punto.
             return (angle-pAngle+360)%360;
+        }
+    }
+
+
+    public static class Rules {
+        /**
+         * Decide la velocidad a tomar según la distancia y el ángulo.
+         * @param distance: distancia al siguiente punto.
+         * @param angle: ángulo relativo de la nave con el siguiente punto.
+         * @param solution: cromosoma usado para la decisión.
+         * @return thrust: la velocidad que llevará la nave.
+         */
+        public double getThrust(double distance, double angle, Chromosome solution) {
+            for (int i = 0; i <= solution.distanceRanges.length; i++) {
+                double dr = 160000;
+                if (i < solution.distanceRanges.length) dr = solution.distanceRanges[i];
+
+                if (distance < dr) for (int j = 0; j <= solution.angleRanges.length; j++) {
+                    double ag = 360;
+                    if (j < solution.angleRanges.length) ag = solution.angleRanges[j];
+                    if (angle < ag) return solution.thrustInRange[i][j];
+                }
+            }
+            return 0;
         }
     }
 
