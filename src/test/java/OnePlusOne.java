@@ -17,6 +17,9 @@ public class OnePlusOne {
   int contador;
   int num_mejoras;
   float fitness;
+  
+  float eval_mutado;
+  Chromosome prueba;
 
   /**
    * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
@@ -121,7 +124,7 @@ public class OnePlusOne {
       "Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected
     );
 
-    return fitness;
+    return fitness - 5 * numCheckpointCollected;
   }
 
  
@@ -164,6 +167,9 @@ public class OnePlusOne {
 
     //Asignacion de los valores aleatorizados a un objeto de tipo chromosome
     Chromosome c = new Chromosome(distanceRanges, angleRanges, thrustInRange, variance);
+    
+	c = new Chromosome("files/chromosome0.csv");  //TRAMPITAS
+	c.variance = variance;//Trampitas 2.0
 
     writeChromosome(c);
 
@@ -180,7 +186,8 @@ public class OnePlusOne {
   
   public void mutacion(){
 	Random rand = new Random();
-    Chromosome mutado = this.chromosome;
+    //Chromosome mutado = this.chromosome.clone;
+	Chromosome mutado = new Chromosome (this.chromosome.distanceRanges, this.chromosome.angleRanges, this.chromosome.thrustInRange, this.chromosome.variance);
 
     for (int i = 0; i < this.chromosome.distanceRanges.length; i++){
       mutado.distanceRanges[i] = this.chromosome.distanceRanges[i] + rand.nextGaussian() * this.chromosome.variance;
@@ -197,7 +204,7 @@ public class OnePlusOne {
         mutado.thrustInRange[i][j] = this.chromosome.thrustInRange[i][j] + rand.nextGaussian() * this.chromosome.variance;
       }
     }
-
+    this.prueba = mutado;
     writeChromosome(mutado);
 
     SoloGameRunner gameRunner = new SoloGameRunner();
@@ -206,6 +213,7 @@ public class OnePlusOne {
     GameResult gameRunnerResult = new GameResult();
     gameRunnerResult = gameRunner.simulate();
     float fitness_mutado = getFitness(gameRunnerResult);
+    this.eval_mutado = fitness_mutado;
 
     if (this.fitness > fitness_mutado){
       this.fitness = fitness_mutado;
@@ -232,7 +240,7 @@ public class OnePlusOne {
     if (this.num_mejoras > 2){
       this.chromosome.variance /= c;
     }
-     this.num_mejoras = 0;
+     //this.num_mejoras = 0;
   }
 
 }

@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Chromosome {
     public double[] distanceRanges; // 0 - 16000
@@ -15,9 +16,14 @@ public class Chromosome {
     
     //Constructor de cromosoma para asociarle valores inicializados en 1+1 aleatoriamente 
     public Chromosome(double[] distanceRanges, double[] angleRanges, double[][] thrustInRange, double variance) {
-        this.distanceRanges = distanceRanges; 
-        this.angleRanges = angleRanges; 
-        this.thrustInRange = thrustInRange; 
+        this.distanceRanges = distanceRanges.clone();
+        this.angleRanges = angleRanges.clone();
+        //this.thrustInRange = thrustInRange.clone(); 
+        double[][] thrustInRange2 = new double[thrustInRange.length][];
+        for (int i = 0; i < thrustInRange.length; i++) {
+        	thrustInRange2[i] = thrustInRange[i].clone();
+        }
+        this.thrustInRange = thrustInRange2;
         this.variance = variance;  
     
     }

@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import com.codingame.gameengine.runner.SoloGameRunner;
 import com.codingame.gameengine.runner.dto.GameResult;
 
@@ -27,15 +29,19 @@ public class SkeletonMain {
     gameRunnerResult = gameRunner.simulate();
 
     */
-
     OnePlusOne evolutivo = new OnePlusOne();
     evolutivo.initialize();
-    for (int i = 0; i<10; i++){
-      evolutivo.mutacion();
-      System.err.println("Ejecucion"+i);
-
-      
+    for (int i = 0; i<1000; i++){
+      evolutivo.mutacion();      
     }
+    SoloGameRunner gameRunner = new SoloGameRunner();
+    gameRunner.setAgent(AgentEE.class);
+    gameRunner.setTestCase("test0.json");
+    gameRunner.start();
+    //GameResult gameRunnerResult = new GameResult();
+    //gameRunnerResult = gameRunner.simulate();
+    
+    System.err.println(evolutivo.fitness);
     /*
     * Toma el primer cromosoma y crea 5 idénticos.
     * En la carpeta files.
