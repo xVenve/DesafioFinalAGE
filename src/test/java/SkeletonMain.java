@@ -26,11 +26,14 @@ public class SkeletonMain {
     gameRunnerResult = gameRunner.simulate();
 
     */
-    OnePlusOne evolutivo = new OnePlusOne();
-    evolutivo.initialize();
-    for (int i = 0; i < 100; i++) {
-      evolutivo.mutacion();
-    }
+
+
+    // Crear y entrena el evolutivo
+	  OnePlusOne evolutivo = new OnePlusOne();
+	  evolutivo.execute(200);
+    System.err.println(evolutivo.chromosome.fitness);
+
+    // Para que se vea comentar el entrenamiento
     SoloGameRunner gameRunner = new SoloGameRunner();
     gameRunner.setAgent(AgentEE.class);
     gameRunner.setTestCase("test0.json");
@@ -38,7 +41,7 @@ public class SkeletonMain {
     // GameResult gameRunnerResult = new GameResult();
     // gameRunnerResult = gameRunner.simulate();
 
-    System.err.println(evolutivo.fitness);
+    
     /*
      * Toma el primer cromosoma y crea 5 idénticos.
      * En la carpeta files.

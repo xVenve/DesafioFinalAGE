@@ -9,12 +9,15 @@ import com.codingame.gameengine.runner.dto.GameResult;
 public class OnePlusOne {
 
 	Chromosome chromosome;
-	int contador;
-	int num_mejoras;
-	float fitness;
+	int contador = 0;
+	int num_mejoras = 0;
 	float eval_mutado;
-
 	int ciclos1_5 = 10;
+
+	// Si no se pasan parametros iniciliza todo aleatoriamente
+	public OnePlusOne() {
+		this.initialize();
+	}
 
 	/**
 	 * Devuelve el fitness del individuo en función de la partida.
@@ -36,118 +39,49 @@ public class OnePlusOne {
 		return fitness - 5 * numCheckpointCollected;
 	}
 
+	/**
+	 * Inicializa el individuo con valores aleatorios.
+	 */
 	public void initialize() {
-		Random rand = new Random();
-		int meanDis = 0;
-		int standardDesviationDis = 1350;
-		int meanAng = 5;
-		int standardDesviationAng = 100;
-		int meanThrust = 0;
-		int standardDesviationThrust = 75;
-		// Inicialización vector de varianzas de distancias
-		for (int i = 0; i < chromosome.varianceDistance.length; i++) {
-			chromosome.varianceDistance[i] = meanDis + rand.nextGaussian() * standardDesviationDis;
-		}
 
-		// Inicialización vector de varianzas de angulos
-		for (int i = 0; i < chromosome.varianceAngle.length; i++) {
-			chromosome.varianceAngle[i] = meanAng + rand.nextGaussian() * standardDesviationAng;
-		}
+		// this.chromosome = new Chromosome(3, 6);
+		this.chromosome = new Chromosome("files/chromosome0.csv"); // TRAMPITAS
 
-		// Inicialización matriz de varianzas velocidades
-		for (int i = 0; i < chromosome.varianceThrust.length; i++) {
-			for (int j = 0; j < chromosome.varianceThrust[0].length; j++) {
-				chromosome.varianceThrust[i][j] = Math.abs(meanThrust + rand.nextGaussian() * standardDesviationThrust);
-			}
-		}
-
-		this.contador = 0;
-		this.num_mejoras = 0;
-
-		// Inicialización del vector de rangos de distancias
-		double distanceMin = 0.0;
-		double distanceMax = 4000.0;
-
-		for (int i = 0; i < chromosome.distanceRanges.length; i++) {
-			chromosome.distanceRanges[i] = distanceMin + (distanceMax - distanceMin) * rand.nextDouble();
-		}
-
-		// Inicialización del vector de rangos de angulos
-		double angleMin = 0.0;
-		double angleMax = 360.0;
-
-		for (int i = 0; i < chromosome.angleRanges.length; i++) {
-			chromosome.angleRanges[i] = angleMin + (angleMax - angleMin) * rand.nextDouble();
-		}
-
-		// Inicialización matriz de aceleración
-		double[][] thrustInRange = new double[7][4];
-		double thrustMin = 0.0;
-		double thrustMax = 200.0;
-		for (int i = 0; i < thrustInRange.length; i++) {
-			for (int j = 0; j < thrustInRange[i].length; j++) {
-				thrustInRange[i][j] = thrustMin + (thrustMax - thrustMin) * rand.nextDouble();
-			}
-		}
-
-		// Asignacion de los valores aleatorizados a un objeto de tipo chromosome
-		Chromosome c = new Chromosome(chromosome.distanceRanges, chromosome.angleRanges, chromosome.thrustInRange,
-				chromosome.varianceDistance.length, chromosome.varianceAngle.length);
-
-		// c = new Chromosome("files/chromosome0.csv"); // TRAMPITAS
-
-		c.writeChromosome("chromosome.csv");
-
+		// Guardado del individuo inicial y ejecución del mismo
+		this.chromosome.writeChromosome("chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
 		gameRunner.setTestCase("test0.json");
 		GameResult gameRunnerResult = new GameResult();
 		gameRunnerResult = gameRunner.simulate();
-		this.fitness = getFitness(gameRunnerResult);
-		this.chromosome = c;
-
+		this.chromosome.fitness = getFitness(gameRunnerResult);
 	}
 
 	public void mutacion() {
-		// Chromosome mutado = this.chromosome.clone;
-		Chromosome mutado = new Chromosome(this.chromosome);
-		/*
-		 * for (int i = 0; i < this.chromosome.distanceRanges.length; i++){
-		 * mutado.distanceRanges[i] = this.chromosome.distanceRanges[i] +
-		 * rand.nextGaussian() * this.chromosome.variance;
-		 * Arrays.sort(mutado.distanceRanges); }
-		 * 
-		 * for (int i = 0; i < this.chromosome.angleRanges.length; i++){
-		 * mutado.angleRanges[i] = (this.chromosome.angleRanges[i] + rand.nextGaussian()
-		 * * this.chromosome.variance)%360; Arrays.sort(mutado.angleRanges); }
-		 * 
-		 * for (int i = 0; i < this.chromosome.thrustInRange.length; i++){ for (int j =
-		 * 0; j< this.chromosome.thrustInRange[i].length; j++){
-		 * mutado.thrustInRange[i][j] = this.chromosome.thrustInRange[i][j] +
-		 * rand.nextGaussian() * this.chromosome.variance; } } this.prueba = mutado;
-		 * mutado.writeChromosome("chromosome.csv");
-		 */
+		// Creamos el cromosoma y los escribimos para obtener el fitness
+		Chromosome hijo = new Chromosome(this.chromosome);
+		hijo.writeChromosome("chromosome.csv");
+
+		// Calcular fitness hijo
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
 		gameRunner.setTestCase("test0.json");
 		GameResult gameRunnerResult = new GameResult();
 		gameRunnerResult = gameRunner.simulate();
-		float fitness_mutado = getFitness(gameRunnerResult);
-		this.eval_mutado = fitness_mutado;
+		hijo.fitness = getFitness(gameRunnerResult);
 
-		if (this.fitness > fitness_mutado) {
-			this.fitness = fitness_mutado;
-			this.chromosome = mutado;
+		// Evaluación del fitness padre e hijo
+		if (chromosome.fitness > hijo.fitness) {
+			chromosome.copyChromosome(hijo);
 			this.num_mejoras++;
 		} else {
 			this.chromosome.writeChromosome("chromosome.csv");
 		}
 
+		// Mutacion de varianza
 		this.contador++;
-
 		if (this.contador % this.ciclos1_5 == 0) {
-			double v = this.num_mejoras / this.ciclos1_5;
-			mutacionVarianza(v);
+			mutacionVarianza(this.num_mejoras / this.ciclos1_5);
 			this.num_mejoras = 0;
 		}
 	}
@@ -157,8 +91,7 @@ public class OnePlusOne {
 
 		if (v < 1 / 5) {
 			c = 0.82;
-		}
-		if (v > 1 / 5) {
+		} else if (v > 1 / 5) {
 			c = 1 / 0.82;
 		}
 
@@ -169,6 +102,13 @@ public class OnePlusOne {
 		for (int i = 0; i < this.chromosome.varianceThrust.length; i++)
 			for (int j = 0; j < this.chromosome.varianceThrust[i].length; j++)
 				this.chromosome.varianceThrust[i][j] *= c;
+	}
+
+	public void execute(int cicles) {
+		for (int i = 0; i < cicles; i++) {
+			this.mutacion();
+		}
+
 	}
 
 }

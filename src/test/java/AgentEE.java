@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class AgentEE {
@@ -7,6 +8,9 @@ public class AgentEE {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		Chromosome solution = new Chromosome("chromosome.csv");
+		Arrays.sort(solution.distanceRanges);
+		Arrays.sort(solution.angleRanges);
+
 		Rules rules = new Rules();
 		int checkpoints = Integer.parseInt(scanner.nextLine());
 		ArrayList<Point> targets = new ArrayList<>();

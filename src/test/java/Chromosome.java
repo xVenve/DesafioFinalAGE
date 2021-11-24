@@ -12,25 +12,19 @@ public class Chromosome {
 	public double[] varianceDistance;
 	public double[] varianceAngle;
 	public double[][] varianceThrust;
+	public double fitness = 0.0;
 
-	// Constructor de cromosoma para asociarle valores inicializados en 1+1
-	// aleatoriamente
-	public Chromosome(double[] distanceRanges, double[] angleRanges, double[][] thrustInRange, int sizeDis,
-			int sizeAng) {
+	public Chromosome(int sizeDis, int sizeAngle) {
+		this.distanceRanges = new double[sizeDis];
+		this.angleRanges = new double[sizeAngle];
+		this.thrustInRange = new double[sizeDis + 1][sizeAngle + 1];
+
 		this.varianceDistance = new double[sizeDis];
-		this.varianceAngle = new double[sizeAng];
-		this.varianceThrust = new double[sizeDis + 1][sizeAng + 1];
-		this.distanceRanges = distanceRanges.clone();
-		this.angleRanges = angleRanges.clone();
-		// this.thrustInRange = thrustInRange.clone();
-		double[][] thrustInRange2 = new double[thrustInRange.length][];
-		for (int i = 0; i < thrustInRange.length; i++) {
-			thrustInRange2[i] = thrustInRange[i].clone();
-		}
-		this.thrustInRange = thrustInRange2;
-		this.varianceAngle = varianceAngle;
-		this.varianceDistance = varianceDistance;
-		this.varianceThrust = varianceThrust;
+		this.varianceAngle = new double[sizeAngle];
+		this.varianceThrust = new double[sizeDis + 1][sizeAngle + 1];
+
+		this.initializeRanges();
+		this.initializeVariances();
 	}
 
 	// Constructor de cromosoma para asociarle valores inicializados en 1+1
@@ -38,48 +32,47 @@ public class Chromosome {
 	public Chromosome(Chromosome c) {
 		Random rand = new Random();
 
+		// Mutación del vector de distancias
 		this.distanceRanges = new double[c.distanceRanges.length];
-
 		for (int i = 0; i < c.distanceRanges.length; i++) {
-			this.distanceRanges[i] = c.distanceRanges[i] + rand.nextGaussian() * c.varianceDistance[i];
+			this.distanceRanges[i] = Math.abs(c.distanceRanges[i] + rand.nextGaussian() * c.varianceDistance[i]);
 		}
-		Arrays.sort(this.distanceRanges);
 
+		// Mutacion vector de angulos
 		this.angleRanges = new double[c.angleRanges.length];
 		for (int i = 0; i < c.angleRanges.length; i++) {
 			this.angleRanges[i] = (c.angleRanges[i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
 		}
-		Arrays.sort(this.angleRanges);
 
+		// Mutacion vector de velocidades
 		this.thrustInRange = new double[c.thrustInRange.length][c.thrustInRange[0].length];
-		System.err.println(c.thrustInRange.length + " " + c.thrustInRange[0].length);
-		System.err.println(c.varianceThrust.length + " " + c.varianceThrust[0].length);
+
 		for (int i = 0; i < c.thrustInRange.length; i++) {
 			for (int j = 0; j < c.thrustInRange[0].length; j++) {
-				System.err.println(i + " " + j);
-				this.thrustInRange[i][j] = c.thrustInRange[i][j] + rand.nextGaussian() * c.varianceThrust[i][j];
+				this.thrustInRange[i][j] = Math.min(Math.abs(c.thrustInRange[i][j] + rand.nextGaussian() * c.varianceThrust[i][j]), 200);
+
 			}
 		}
 
-		this.varianceAngle = c.varianceAngle;
-		this.varianceDistance = c.varianceDistance;
-		this.varianceThrust = new double[c.varianceThrust.length][];
-		for (int i = 0; i < thrustInRange.length; i++) {
-			this.varianceThrust[i] = c.varianceThrust[i].clone();
-		}
-		writeChromosome("chromosome.csv");
+		// Copia de varianzas
+		this.varianceDistance = new double[c.varianceDistance.length];
+		System.arraycopy(c.varianceDistance, 0, this.varianceDistance, 0, c.varianceDistance.length);
 
+		this.varianceAngle = new double[c.varianceAngle.length];
+		System.arraycopy(c.varianceAngle, 0, this.varianceAngle, 0, c.varianceAngle.length);
+
+		this.varianceThrust = new double[c.varianceThrust.length][c.varianceThrust[0].length];
+		for (int i = 0; i < this.varianceThrust.length; i++) {
+			System.arraycopy(c.varianceThrust[i], 0, this.varianceThrust[i], 0, this.varianceThrust[i].length);
+		}
+
+		writeChromosome("chromosome.csv");
 	}
 
-	/**
-	 * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
-	 * Fichero: chromosome.csv
-	 */
-	public Chromosome(String file, double[] varianceDistance, double[] varianceAngle, double[][] varianceThrust) { 
-		// Meter varianza
+	// Read Ranges from file chromosome.csv
+	public Chromosome(String path) {
 		try {
-			System.err.println(file);
-			FileReader fileReader = new FileReader(file);
+			FileReader fileReader = new FileReader(path);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
 			String distanceRangesLine = bufferedReader.readLine();
@@ -94,10 +87,70 @@ public class Chromosome {
 			for (int i = 0; i < numDistanceRanges + 1; i++) {
 				this.thrustInRange[i] = convertToDouble(bufferedReader.readLine().split(","));
 			}
-
+			this.varianceDistance = new double[numDistanceRanges];
+			this.varianceAngle = new double[numAngleRanges];
+			this.varianceThrust = new double[numDistanceRanges + 1][numAngleRanges + 1];
 			bufferedReader.close();
+
 		} catch (Exception e) {
 			System.err.println(e);
+		}
+		this.initializeVariances();
+	}
+
+	public void initializeRanges() {
+		Random rand = new Random();
+
+		// Inicialización del vector de rangos de distancias
+		double distanceMax = 4000.0;
+		for (int i = 0; i < this.distanceRanges.length; i++) {
+			this.distanceRanges[i] = (distanceMax) * rand.nextDouble();
+		}
+
+		// Inicialización del vector de rangos de angulos
+		double angleMax = 360.0;
+		for (int i = 0; i < this.angleRanges.length; i++) {
+			this.angleRanges[i] = (angleMax) * rand.nextDouble();
+		}
+
+		// Inicialización matriz de aceleración
+		double thrustMax = 200.0;
+		for (int i = 0; i < thrustInRange.length; i++) {
+			for (int j = 0; j < this.thrustInRange[i].length; j++) {
+				this.thrustInRange[i][j] = (thrustMax) * rand.nextDouble();
+			}
+		}
+	}
+
+	public void initializeVariances() {
+		Random rand = new Random();
+		int standardDesviationDis = 1350;
+		int standardDesviationAng = 100;
+		int standardDesviationThrust = 75;
+
+		// Inicialización vector de varianzas de distancias
+		for (int i = 0; i < this.varianceDistance.length; i++) {
+			this.varianceDistance[i] = Math.abs(rand.nextGaussian() * standardDesviationDis);
+		}
+
+		// Inicialización vector de varianzas de angulos
+		for (int i = 0; i < this.varianceAngle.length; i++) {
+			this.varianceAngle[i] = Math.abs(rand.nextGaussian() * standardDesviationAng);
+		}
+
+		// Inicialización matriz de varianzas velocidades
+		for (int i = 0; i < this.varianceThrust.length; i++) {
+			for (int j = 0; j < this.varianceThrust[0].length; j++) {
+				this.varianceThrust[i][j] = Math.abs(rand.nextGaussian() * standardDesviationThrust);
+			}
+		}
+	}
+
+	public void copyChromosome(Chromosome c) {
+		System.arraycopy(c.distanceRanges, 0, this.distanceRanges, 0, c.distanceRanges.length);
+		System.arraycopy(c.angleRanges, 0, this.varianceDistance, 0, c.varianceDistance.length);
+		for (int i = 0; i < this.varianceThrust.length; i++) {
+			System.arraycopy(c.thrustInRange[i], 0, this.thrustInRange[i], 0, this.thrustInRange[i].length);
 		}
 	}
 
