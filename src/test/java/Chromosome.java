@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Random;
 
 public class Chromosome {
@@ -50,7 +49,6 @@ public class Chromosome {
 		for (int i = 0; i < c.thrustInRange.length; i++) {
 			for (int j = 0; j < c.thrustInRange[0].length; j++) {
 				this.thrustInRange[i][j] = Math.min(Math.abs(c.thrustInRange[i][j] + rand.nextGaussian() * c.varianceThrust[i][j]), 200);
-
 			}
 		}
 
