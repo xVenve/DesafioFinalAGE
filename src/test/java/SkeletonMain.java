@@ -31,15 +31,15 @@ public class SkeletonMain {
     */
     OnePlusOne evolutivo = new OnePlusOne();
     evolutivo.initialize();
-    for (int i = 0; i<1000; i++){
+    for (int i = 0; i<100; i++){
       evolutivo.mutacion();      
     }
     SoloGameRunner gameRunner = new SoloGameRunner();
     gameRunner.setAgent(AgentEE.class);
     gameRunner.setTestCase("test0.json");
     gameRunner.start();
-    //GameResult gameRunnerResult = new GameResult();
-    //gameRunnerResult = gameRunner.simulate();
+   // GameResult gameRunnerResult = new GameResult();
+   // gameRunnerResult = gameRunner.simulate();
     
     System.err.println(evolutivo.fitness);
     /*

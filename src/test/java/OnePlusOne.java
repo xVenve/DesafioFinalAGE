@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.Random;
 import com.codingame.gameengine.runner.SoloGameRunner;
-import com.codingame.gameengine.runner.dto.GameResult;
 
 public class OnePlusOne {
 
@@ -17,92 +16,10 @@ public class OnePlusOne {
   int contador;
   int num_mejoras;
   float fitness;
-  
   float eval_mutado;
-  Chromosome prueba;
 
-  /**
-   * Lee el fichero csv con la información del cormosoma e inicializa los arrays.
-   * Fichero: chromosome.csv
-   */
-  private Chromosome getChromosome(Chromosome chromosome) {
-    try {
-      FileReader fileReader = new FileReader("chromosome.csv");
-      BufferedReader bufferedReader = new BufferedReader(fileReader);
+  int ciclos1_5 = 10;
 
-      String distanceRangesLine = bufferedReader.readLine();
-      int numDistanceRanges = distanceRangesLine.split(",").length;
-      chromosome.distanceRanges =
-        convertToDouble(distanceRangesLine.split(","));
-
-      String angleRangesLine = bufferedReader.readLine();
-      int numAngleRanges = angleRangesLine.split(",").length;
-      chromosome.angleRanges = convertToDouble(angleRangesLine.split(","));
-
-      chromosome.thrustInRange =
-        new double[numDistanceRanges + 1][numAngleRanges + 1];
-      for (int i = 0; i < numDistanceRanges + 1; i++) {
-        chromosome.thrustInRange[i] =
-          convertToDouble(bufferedReader.readLine().split(","));
-      }
-      bufferedReader.close();
-    } catch (Exception e) {
-      System.err.println(e);
-    }
-    return chromosome;
-  }
-
-  /**
-   * Convierte la entrada String del csv a un array de double.
-   * @param values: valores del csv en formato String.
-   * @return convertedValues: array de valores en formato double.
-   */
-  private double[] convertToDouble(String[] values) {
-    double[] convertedValues = new double[values.length];
-    for (int i = 0; i < values.length; i++) {
-      convertedValues[i] = Double.parseDouble(values[i]);
-    }
-    return convertedValues;
-  }
-
-  /**
-   * Guarda la información de un cromosoma en formato csv.
-   * Fichero: chromosome.csv.
-   * @param chromosome: cromosoma que se escribe en fichero.
-   */
-  private void writeChromosome(Chromosome chromosome) {
-    FileWriter myWriter;
-    try {
-      myWriter = new FileWriter("chromosome.csv");
-      for (int i = 0; i < chromosome.distanceRanges.length; i++) {
-        if (i == chromosome.distanceRanges.length - 1) {
-          myWriter.write(chromosome.distanceRanges[i] + "\n");
-        } else {
-          myWriter.write(chromosome.distanceRanges[i] + ",");
-        }
-      }
-      for (int i = 0; i < chromosome.angleRanges.length; i++) {
-        if (i == chromosome.angleRanges.length - 1) {
-          myWriter.write(chromosome.angleRanges[i] + "\n");
-        } else {
-          myWriter.write(chromosome.angleRanges[i] + ",");
-        }
-      }
-      for (int i = 0; i < chromosome.thrustInRange.length; i++) {
-        for (int j = 0; j < chromosome.thrustInRange[i].length; j++) {
-          if (j == chromosome.thrustInRange[i].length - 1) {
-            myWriter.write(chromosome.thrustInRange[i][j] + "\n");
-          } else {
-            myWriter.write(chromosome.thrustInRange[i][j] + ",");
-          }
-        }
-      }
-      myWriter.flush();
-      myWriter.close();
-    } catch (IOException e) {
-      System.err.println(e);
-    }
-  }
 
   /**
    * Devuelve el fitness del individuo en función de la partida.
@@ -130,29 +47,46 @@ public class OnePlusOne {
  
    public void initialize(){
     Random rand = new Random();
-    //Inicializacion de la varianza, solo se utilizará un valor de varianza 
-    int mean = 5;
-    int standard_desviation = 20;
-    double variance = mean + rand.nextGaussian()* standard_desviation;
+    int meanDis = 0;
+    int standardDesviationDis = 1350;
+    int meanAng = 5;
+    int standardDesviationAng = 100;
+    int meanThrust = 0;
+    int standardDesviationThrust = 75;
+    //Inicialización vector de varianzas de distancias 
+    for (int i = 0; i< chromosome.varianceDistance.length; i++){
+      chromosome.varianceDistance[i] = meanDis + rand.nextGaussian() * standardDesviationDis;
+    }
+
+    //Inicialización vector de varianzas de angulos 
+    for (int i = 0; i< chromosome.varianceAngle.length; i++){
+      chromosome.varianceAngle[i] = meanAng + rand.nextGaussian() * standardDesviationAng;
+    }
+
+    //Inicialización matriz de varianzas velocidades
+    for (int i = 0; i< chromosome.varianceThrust.length; i++){
+     for (int j = 0; j< chromosome.varianceThrust[0].length; j++){
+          chromosome.varianceThrust[i][j] = Math.abs(meanThrust + rand.nextGaussian() * standardDesviationThrust);
+     }
+    }
+    
     this.contador = 0;
     this.num_mejoras = 0;
 
     //Inicialización del vector de rangos de distancias 
-    double [] distanceRanges = new double [3];
     double distanceMin = 0.0;
     double distanceMax = 4000.0;
 
-    for (int i = 0; i < distanceRanges.length; i++){
-      distanceRanges[i] = distanceMin + (distanceMax-distanceMin) * rand.nextDouble();
+    for (int i = 0; i < chromosome.distanceRanges.length; i++){
+      chromosome.distanceRanges[i] = distanceMin + (distanceMax-distanceMin) * rand.nextDouble();
     }
 
    //Inicialización del vector de rangos de angulos 
-    double [] angleRanges = new double [6];
     double angleMin = 0.0;
     double angleMax = 360.0;   
 
-    for (int i = 0; i < angleRanges.length; i++){
-      angleRanges[i] = angleMin + (angleMax-angleMin) * rand.nextDouble();
+    for (int i = 0; i < chromosome.angleRanges.length; i++){
+      chromosome.angleRanges[i] = angleMin + (angleMax-angleMin) * rand.nextDouble();
     }
 
     //Inicialización matriz de aceleración 
@@ -166,12 +100,11 @@ public class OnePlusOne {
     }
 
     //Asignacion de los valores aleatorizados a un objeto de tipo chromosome
-    Chromosome c = new Chromosome(distanceRanges, angleRanges, thrustInRange, variance);
+    Chromosome c = new Chromosome(chromosome.distanceRanges, chromosome.angleRanges, chromosome.thrustInRange, chromosome.varianceDistance.length, chromosome.varianceAngle.length);
     
-	c = new Chromosome("files/chromosome0.csv");  //TRAMPITAS
-	c.variance = variance;//Trampitas 2.0
+    // c = new Chromosome("files/chromosome0.csv");  // TRAMPITAS
 
-    writeChromosome(c);
+    c.writeChromosome("chromosome.csv");
 
     SoloGameRunner gameRunner = new SoloGameRunner();
     gameRunner.setAgent(AgentEE.class);
@@ -187,8 +120,8 @@ public class OnePlusOne {
   public void mutacion(){
 	Random rand = new Random();
     //Chromosome mutado = this.chromosome.clone;
-	Chromosome mutado = new Chromosome (this.chromosome.distanceRanges, this.chromosome.angleRanges, this.chromosome.thrustInRange, this.chromosome.variance);
-
+	Chromosome mutado = new Chromosome (this.chromosome);
+/*
     for (int i = 0; i < this.chromosome.distanceRanges.length; i++){
       mutado.distanceRanges[i] = this.chromosome.distanceRanges[i] + rand.nextGaussian() * this.chromosome.variance;
       Arrays.sort(mutado.distanceRanges);
@@ -205,8 +138,8 @@ public class OnePlusOne {
       }
     }
     this.prueba = mutado;
-    writeChromosome(mutado);
-
+    mutado.writeChromosome("chromosome.csv");
+*/
     SoloGameRunner gameRunner = new SoloGameRunner();
     gameRunner.setAgent(AgentEE.class);
     gameRunner.setTestCase("test0.json");
@@ -220,27 +153,35 @@ public class OnePlusOne {
       this.chromosome = mutado;
       this.num_mejoras++;
     }else{
-      writeChromosome(this.chromosome);
+      this.chromosome.writeChromosome("chromosome.csv");
     }
 
     this.contador++;
 
-    if(this.contador % 10 == 0){
-      mutacionVarianza();
+    if(this.contador % this.ciclos1_5 == 0){
+      double v = this.num_mejoras / this.ciclos1_5;
+      mutacionVarianza(v);   
+      this.num_mejoras = 0;  
     }
   }
 
+  public void mutacionVarianza(double v){
+    double c = 1;
 
-  public void mutacionVarianza(){
-    double c = 0.82;
+    if (v < 1/5){
+       c=0.82;
+    }
+    if (v > 1/5){
+      c=1/0.82;
+    }
 
-    if (this.num_mejoras < 2){
-      this.chromosome.variance *= c;
-    }
-    if (this.num_mejoras > 2){
-      this.chromosome.variance /= c;
-    }
-     //this.num_mejoras = 0;
+    for(int i=0; i<this.chromosome.varianceDistance.length; i++) 
+      this.chromosome.varianceDistance[i] *= c;
+    for(int i=0; i<this.chromosome.varianceAngle.length; i++) 
+      this.chromosome.varianceAngle[i] *= c;
+    for(int i=0; i<this.chromosome.varianceThrust.length; i++) 
+      for(int j=0; j<this.chromosome.varianceThrust[i].length; j++) 
+        this.chromosome.varianceThrust[i][j] *= c;
   }
 
 }
