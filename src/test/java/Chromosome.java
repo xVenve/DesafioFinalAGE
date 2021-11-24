@@ -163,7 +163,7 @@ public class Chromosome {
 	/*
 	public void copyChromosome(Chromosome c) {
 		System.arraycopy(c.distanceRanges, 0, this.distanceRanges, 0, c.distanceRanges.length);
-		System.arraycopy(c.angleRanges, 0, this.varianceDistance, 0, c.varianceDistance.length);
+		System.arraycopy(c.angleRanges, 0, this.angleRanges, 0, c.angleRanges.length);
 		for (int i = 0; i < this.varianceThrust.length; i++) {
 			System.arraycopy(c.thrustInRange[i], 0, this.thrustInRange[i], 0, this.thrustInRange[i].length);
 		}
