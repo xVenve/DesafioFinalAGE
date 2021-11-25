@@ -13,6 +13,11 @@ public class Chromosome {
 	public double[][] varianceThrust;
 	public double fitness = 0.0;
 
+	/**
+	 * Constructor para inicializar cormosoma aleatoriamente
+	 * @param sizeDis: tamaño del rango de distancias
+	 * @param sizeAngle: tamaño del rango de ángulos
+	 */
 	public Chromosome(int sizeDis, int sizeAngle) {
 		this.distanceRanges = new double[sizeDis];
 		this.angleRanges = new double[sizeAngle];
@@ -26,8 +31,10 @@ public class Chromosome {
 		this.initializeVariances();
 	}
 
-	// Constructor de cromosoma para asociarle valores inicializados en 1+1
-	// aleatoriamente
+	/**
+	 * Crea un individuo a partir del padre y muta.
+	 * @param c: cromosoma del padre
+	 */
 	public Chromosome(Chromosome c) {
 		Random rand = new Random();
 
@@ -67,7 +74,10 @@ public class Chromosome {
 		writeChromosome("chromosome.csv");
 	}
 
-	// Read Ranges from file chromosome.csv
+	/**
+	 * Crea un cormosoma a partir de la información de un CSV
+	 * @param path: ruta del fichero CSV
+	 */
 	public Chromosome(String path) {
 		try {
 			FileReader fileReader = new FileReader(path);
@@ -96,6 +106,9 @@ public class Chromosome {
 		this.initializeVariances();
 	}
 
+	/**
+	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
+	 */
 	public void initializeRanges() {
 		Random rand = new Random();
 
@@ -120,6 +133,9 @@ public class Chromosome {
 		}
 	}
 
+	/**
+	 * Inicializa las varianzas aleatoriamente
+	 */
 	public void initializeVariances() {
 		Random rand = new Random();
 		int standardDesviationDis = 1350;
@@ -144,6 +160,7 @@ public class Chromosome {
 		}
 	}
 
+	/*
 	public void copyChromosome(Chromosome c) {
 		System.arraycopy(c.distanceRanges, 0, this.distanceRanges, 0, c.distanceRanges.length);
 		System.arraycopy(c.angleRanges, 0, this.varianceDistance, 0, c.varianceDistance.length);
@@ -151,10 +168,10 @@ public class Chromosome {
 			System.arraycopy(c.thrustInRange[i], 0, this.thrustInRange[i], 0, this.thrustInRange[i].length);
 		}
 	}
+	 */
 
 	/**
 	 * Convierte la entrada String del csv a un array de double.
-	 * 
 	 * @param values: valores del csv en formato String.
 	 * @return convertedValues: array de valores en formato double.
 	 */
@@ -167,7 +184,6 @@ public class Chromosome {
 
 	/**
 	 * Guarda la información de un cromosoma en formato csv.
-	 * 
 	 * @param file: fichero en el que se copia el individuo.
 	 */
 	public void writeChromosome(String file) {
@@ -188,15 +204,16 @@ public class Chromosome {
 					myWriter.write(this.angleRanges[i] + ",");
 				}
 			}
-			for (int i = 0; i < this.thrustInRange.length; i++) {
-				for (int j = 0; j < this.thrustInRange[i].length; j++) {
-					if (j == this.thrustInRange[i].length - 1) {
-						myWriter.write(this.thrustInRange[i][j] + "\n");
+			for (double[] doubles : this.thrustInRange) {
+				for (int j = 0; j < doubles.length; j++) {
+					if (j == doubles.length - 1) {
+						myWriter.write(doubles[j] + "\n");
 					} else {
-						myWriter.write(this.thrustInRange[i][j] + ",");
+						myWriter.write(doubles[j] + ",");
 					}
 				}
 			}
+			myWriter.write(this.fitness + "\n");
 			myWriter.flush();
 			myWriter.close();
 
