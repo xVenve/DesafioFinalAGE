@@ -17,7 +17,7 @@ public class OnePlusOne {
 	 */
 	public OnePlusOne() {
 		// this.chromosome = new Chromosome(3, 6);
-		this.chromosome = new Chromosome("files/chromosome0.csv"); // TRAMPITAS
+		this.chromosome = new Chromosome("files/chromosome2.csv"); // TRAMPITAS
 
 		// Guardado del individuo inicial y ejecución del mismo
 		this.chromosome.writeChromosome("files/chromosome1.csv");

@@ -29,8 +29,8 @@ public class SkeletonMain {
 
 
     // Crear y entrena el evolutivo
-	  OnePlusOne evolutivo = new OnePlusOne();
-	  evolutivo.execute(200);
+	OnePlusOne evolutivo = new OnePlusOne();
+	evolutivo.execute(500);
     System.err.println(evolutivo.chromosome.fitness);
 
     // Para que se vea comentar el entrenamiento
@@ -38,6 +38,7 @@ public class SkeletonMain {
     gameRunner.setAgent(AgentEE.class);
     gameRunner.setTestCase("test0.json");
     gameRunner.start();
+    //System.err.println(evolutivo.chromosome.fitness);
     // GameResult gameRunnerResult = new GameResult();
     // gameRunnerResult = gameRunner.simulate();
 
