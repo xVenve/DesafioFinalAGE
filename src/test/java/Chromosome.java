@@ -137,25 +137,22 @@ public class Chromosome {
 	 * Inicializa las varianzas aleatoriamente
 	 */
 	public void initializeVariances() {
-		Random rand = new Random();
-		int standardDesviationDis = 1350;
-		int standardDesviationAng = 100;
-		int standardDesviationThrust = 75;
+		double[][] stndDer = {{1000, 3000}, {90, 360}, {50, 150}};
 
 		// Inicialización vector de varianzas de distancias
 		for (int i = 0; i < this.varianceDistance.length; i++) {
-			this.varianceDistance[i] = Math.abs(rand.nextGaussian() * standardDesviationDis);
+			this.varianceDistance[i] = Math.random() * (stndDer[0][1]-stndDer[0][0])+stndDer[0][0];
 		}
 
 		// Inicialización vector de varianzas de angulos
 		for (int i = 0; i < this.varianceAngle.length; i++) {
-			this.varianceAngle[i] = Math.abs(rand.nextGaussian() * standardDesviationAng);
+			this.varianceAngle[i] = Math.random() * (stndDer[1][1]-stndDer[1][0])+stndDer[1][0];
 		}
 
 		// Inicialización matriz de varianzas velocidades
 		for (int i = 0; i < this.varianceThrust.length; i++) {
 			for (int j = 0; j < this.varianceThrust[0].length; j++) {
-				this.varianceThrust[i][j] = Math.abs(rand.nextGaussian() * standardDesviationThrust);
+				this.varianceThrust[i][j] = Math.random() * (stndDer[2][1]-stndDer[2][0])+stndDer[2][0];
 			}
 		}
 	}
