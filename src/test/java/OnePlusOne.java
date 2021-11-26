@@ -27,6 +27,7 @@ public class OnePlusOne {
 
 	/**
 	 * Ejecuta el algoritmo 1+1
+	 * 
 	 * @param cicles: número de ciclos que se ejecuta el algoritmo
 	 */
 	public void execute(int cicles) {
@@ -55,12 +56,13 @@ public class OnePlusOne {
 
 	/**
 	 * Muta la varianza del cromosoma cuando cumple la regla del 1/5
+	 * 
 	 * @param v: relación de mejora por ciclo.
 	 */
 	private void mutacionVarianza(double v) {
 		double c = 1;
-		if (v < (double) 1 / 5)	c = 0.82;
-		else if (v > (double) 1 / 5)	c = 1 / 0.82;
+		if (v < (double) 1 / 5) c = 0.82;
+		else if (v > (double) 1 / 5) c = 1 / 0.82;
 
 		for (int i = 0; i < this.chromosome.varianceDistance.length; i++)
 			this.chromosome.varianceDistance[i] *= c;
@@ -73,10 +75,11 @@ public class OnePlusOne {
 
 	/**
 	 * Devuelve el fitness del individuo en función de la partida.
+	 * 
 	 * @return fitness: puntuación del individuo.
 	 */
 	private float getFitness(Chromosome c) {
-		//Inicia la ejecución del individuo y obtiene su fitness
+		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
