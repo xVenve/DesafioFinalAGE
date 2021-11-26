@@ -17,7 +17,7 @@ public class OnePlusOne {
 	 */
 	public OnePlusOne() {
 		// this.chromosome = new Chromosome(3, 6);
-		this.chromosome = new Chromosome("files/chromosome2.csv"); // TRAMPITAS
+		this.chromosome = new Chromosome("files/chromosome0.csv");
 
 		// Guardado del individuo inicial y ejecución del mismo
 		this.chromosome.writeChromosome("files/chromosome1.csv");
@@ -31,15 +31,18 @@ public class OnePlusOne {
 	 * @param cicles: número de ciclos que se ejecuta el algoritmo
 	 */
 	public void execute(int cicles) {
+		int cont_mejor = 0;
 		for (int i = 0; i < cicles; i++) {
 			// Creamos el cromosoma y los escribimos para obtener el fitness
 			Chromosome hijo = new Chromosome(this.chromosome);
 			hijo.fitness = getFitness(hijo);
 
 			// Evaluación del fitness padre e hijo
-			if (chromosome.fitness > hijo.fitness) {
-				chromosome.copyChromosome(hijo);
+			if (this.chromosome.fitness > hijo.fitness) {
+				this.chromosome = hijo;
 				this.num_mejoras++;
+				this.chromosome.writeChromosome("files/chromosomeX" + cont_mejor + ".csv");
+				cont_mejor++;
 			} else {
 				this.chromosome.writeChromosome("chromosome.csv");
 			}
@@ -52,6 +55,7 @@ public class OnePlusOne {
 				this.num_mejoras = 0;
 			}
 		}
+		this.chromosome.writeChromosome("files/chromosome1.csv");
 	}
 
 	/**
