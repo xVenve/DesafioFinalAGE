@@ -13,7 +13,7 @@ public class SkeletonMain {
 	 */
 	public static void train() {
 		OnePlusOne evolutivo = new OnePlusOne();
-		evolutivo.execute(10);
+		evolutivo.execute(100);
 		System.err.println(evolutivo.chromosome.fitness);
 	}
 

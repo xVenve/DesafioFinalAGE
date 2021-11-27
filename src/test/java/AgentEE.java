@@ -32,7 +32,7 @@ public class AgentEE {
 			// int vy = Integer.parseInt(input[4]);
 			int angle = Integer.parseInt(input[5]);
 			Point targ = targets.get(target);
-			Point targ2 = targets.get((target+1)%targets.size());
+			Point targ2 = targets.get((target + 1) % targets.size());
 			Point current = new Point(x, y);
 
 			// Calcula distancia al siguiente punto y ángulo relativo de la nave con el
@@ -121,7 +121,7 @@ public class AgentEE {
 									for (int j2 = 0; j2 <= solution.angleRanges[0].length; j2++) {
 										double ag2 = 360;
 										if (j2 < solution.angleRanges[0].length) ag2 = solution.angleRanges[0][j2];
-										if (angle2 < ag2) return solution.thrustInRange[i][j];
+										if (angle2 < ag2) return solution.thrustInRange[i][j][i2][j2];
 									}
 								}
 							}

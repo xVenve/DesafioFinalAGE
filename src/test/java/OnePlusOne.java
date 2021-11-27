@@ -17,7 +17,7 @@ public class OnePlusOne {
 	 */
 	public OnePlusOne() {
 		// this.chromosome = new Chromosome(3, 6);
-		this.chromosome = new Chromosome("files/chromosome0.csv");
+		this.chromosome = new Chromosome("files/chromosome00.csv");
 
 		// Guardado del individuo inicial y ejecución del mismo
 		this.chromosome.writeChromosome("files/chromosome1.csv");
@@ -83,20 +83,28 @@ public class OnePlusOne {
 	private float getFitness(Chromosome c) {
 		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("files/chromosome.csv");
-		SoloGameRunner gameRunner = new SoloGameRunner();
-		gameRunner.setAgent(AgentEE.class);
-		gameRunner.setTestCase("test0.json");
-		GameResult gameRunnerResult = gameRunner.simulate();
 
-		// Basic Fitness function, game score
-		float fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
-				gameRunnerResult.metadata.split(":")[1].length() - 3));
+		int numMapas = 3;
+		float totalFitness = 0;
 
-		// Number of Checkpoints collected
-		int numCheckpointCollected = gameRunnerResult.summaries.size()
-				- Collections.frequency(gameRunnerResult.summaries, "");
+		for (int i = 0; i < numMapas; i++) {
+			SoloGameRunner gameRunner = new SoloGameRunner();
+			gameRunner.setAgent(AgentEE.class);
+			gameRunner.setTestCase("test" + i + ".json");
+			GameResult gameRunnerResult = gameRunner.simulate();
 
-		System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
-		return fitness - 5 * numCheckpointCollected;
+			float fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
+					gameRunnerResult.metadata.split(":")[1].length() - 3));
+
+			// Number of Checkpoints collected
+			int numCheckpointCollected = gameRunnerResult.summaries.size()
+					- Collections.frequency(gameRunnerResult.summaries, "");
+
+			totalFitness += fitness - 5 * numCheckpointCollected;
+			System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
+		}
+
+		System.err.println("Fitness: " + totalFitness / numMapas);
+		return totalFitness / numMapas;
 	}
 }
