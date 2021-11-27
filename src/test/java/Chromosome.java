@@ -8,9 +8,11 @@ public class Chromosome {
 	public double[] distanceRanges; // 0 - 16000
 	public double[] angleRanges; // 0 - 360
 	public double[][] thrustInRange; // 0 - 200
+
 	public double[] varianceDistance;
 	public double[] varianceAngle;
 	public double[][] varianceThrust;
+
 	public double fitness = 0.0;
 
 	/**
@@ -50,6 +52,7 @@ public class Chromosome {
 		this.angleRanges = new double[c.angleRanges.length];
 		for (int i = 0; i < c.angleRanges.length; i++) {
 			this.angleRanges[i] = (c.angleRanges[i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
+			this.angleRanges[i] = (this.angleRanges[i]+360) % 360;
 		}
 
 		// Mutacion vector de velocidades
@@ -72,8 +75,6 @@ public class Chromosome {
 		for (int i = 0; i < this.varianceThrust.length; i++) {
 			System.arraycopy(c.varianceThrust[i], 0, this.varianceThrust[i], 0, this.varianceThrust[i].length);
 		}
-
-		writeChromosome("chromosome.csv");
 	}
 
 	/**
@@ -140,7 +141,8 @@ public class Chromosome {
 	 * Inicializa las varianzas aleatoriamente
 	 */
 	public void initializeVariances() {
-		double[][] stndDer = { { 1000, 3000 }, { 90, 360 }, { 50, 150 } };
+		//En orden: distancia, ángulo, aceleración
+		double[][] stndDer = { { 500, 3000 }, { 10, 180 }, { 50, 150 } };
 
 		// Inicialización vector de varianzas de distancias
 		for (int i = 0; i < this.varianceDistance.length; i++) {

@@ -7,7 +7,7 @@ public class AgentEE {
 	// the checkpoint
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		Chromosome solution = new Chromosome("files/chromosome1.csv");
+		Chromosome solution = new Chromosome("files/chromosome.csv");
 		Arrays.sort(solution.distanceRanges);
 		Arrays.sort(solution.angleRanges);
 

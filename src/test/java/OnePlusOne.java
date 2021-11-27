@@ -41,10 +41,9 @@ public class OnePlusOne {
 			if (this.chromosome.fitness > hijo.fitness) {
 				this.chromosome = hijo;
 				this.num_mejoras++;
-				this.chromosome.writeChromosome("files/chromosomeX" + cont_mejor + ".csv");
-				cont_mejor++;
+				this.chromosome.writeChromosome("files/chromosomeX" + i + ".csv");
 			} else {
-				this.chromosome.writeChromosome("chromosome.csv");
+				this.chromosome.writeChromosome("files/chromosome.csv");
 			}
 
 			// Mutacion de varianza
@@ -84,7 +83,7 @@ public class OnePlusOne {
 	 */
 	private float getFitness(Chromosome c) {
 		// Inicia la ejecución del individuo y obtiene su fitness
-		c.writeChromosome("chromosome.csv");
+		c.writeChromosome("files/chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
 		gameRunner.setTestCase("test0.json");
