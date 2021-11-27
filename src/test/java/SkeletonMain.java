@@ -5,7 +5,7 @@ public class SkeletonMain {
 	public static void main(String[] args) {
 		// Uncomment this section and comment the other one to create a Solo Game
 		train();
-		run();
+		// run();
 	}
 
 	/**
@@ -13,7 +13,7 @@ public class SkeletonMain {
 	 */
 	public static void train() {
 		OnePlusOne evolutivo = new OnePlusOne();
-		evolutivo.execute(100);
+		evolutivo.execute(10);
 		System.err.println(evolutivo.chromosome.fitness);
 	}
 

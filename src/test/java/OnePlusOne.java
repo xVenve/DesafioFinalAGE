@@ -31,7 +31,6 @@ public class OnePlusOne {
 	 * @param cicles: número de ciclos que se ejecuta el algoritmo
 	 */
 	public void execute(int cicles) {
-		int cont_mejor = 0;
 		for (int i = 0; i < cicles; i++) {
 			// Creamos el cromosoma y los escribimos para obtener el fitness
 			Chromosome hijo = new Chromosome(this.chromosome);
