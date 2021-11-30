@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
-public class Chromosome {
+public class Chromosome implements Comparable<Chromosome>{
 	public double[] distanceRanges; // 0 - 16000
 	public double[] angleRanges; // 0 - 360
 	public double[][] thrustInRange; // 0 - 200
@@ -109,6 +109,19 @@ public class Chromosome {
 		this.initializeVariances();
 	}
 
+	/**
+     * this function allow us to sort a list of Chromosomes
+     */
+    @Override
+    public int compareTo (Chromosome c){
+        if(c.fitness > this.fitness){
+			return -1;
+		} else if (c.fitness == this.fitness) {
+			return 0;
+		} else {
+			return 1;
+		}
+    }
 	/**
 	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
 	 */

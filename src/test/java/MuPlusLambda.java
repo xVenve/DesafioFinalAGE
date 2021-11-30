@@ -9,14 +9,14 @@ import java.util.*;
 public class MuPlusLambda {
 
     List <Chromosome> chromosomes = new ArrayList<Chromosome>(); // array of chromosomes, represents the population
-    int populationSize = 10; // size of the population
-    int lambda = 12; 
 
+    final int populationSize = 10; // size of the population
+    final int lambda = 12; 
     final double learningRate0 = 1 / Math.sqrt(2 * lambda); 
     final double learningRate = 1 / Math.sqrt(2 * Math.sqrt(lambda));
 
     /**
-	 * Crea la población de individuos aleatoriamente
+	 * Random inicialization of the population
 	 */
     public MuPlusLambda() {
         Chromosome c0 = new Chromosome("files/chromosome2.csv");
@@ -33,6 +33,9 @@ public class MuPlusLambda {
 
     }
 
+    /**
+     * this method generates "lambda" new individuals, sort the population and select the best ones
+     */
     public void evolution(){
         
         // generate as much individuals as lambda 
@@ -60,8 +63,8 @@ public class MuPlusLambda {
                     newChromosome.thrustInRange[j][k] = newGen;
                 }    
             }
-            // values of varianceDistance for the new individual
 
+            // values of varianceDistance for the new individual
             for (int j = 0; j < this.chromosomes.get(i).varianceDistance.length; i++){
 
                 if ( Math.floor(Math.random()*2) == 0){
@@ -80,6 +83,7 @@ public class MuPlusLambda {
                 }
             }
 
+            // values of varianceThrust for the new individual
             for (int j = 0; j < this.chromosomes.get(i).varianceThrust.length; i++){
                 for (int k = 0; k < this.chromosomes.get(i).varianceThrust[j].length; k++){
                     if ( Math.floor(Math.random()*2) == 0){
@@ -95,19 +99,17 @@ public class MuPlusLambda {
 
            // adding the new individual into the population
            this.chromosomes.add(newChromosome);
-        }   
-    }
+        }
+        
+        // sort the new population based on fitness 
+        Collections.sort(this.chromosomes);
 
-    /*
-    public void sort(){  
-        Collections.sort(chromosomes, new Comparator<Chromosome>() {
-            @Override
-            public int compare(Chromosome c1, Chromosome c2) {
-                return new Integer (c1.fitness).compareTo(new Integer(c2.fitness));
-            }
-        });
+        // remove the last "lambda" indiviuduals from the population
+        for (int j = this.chromosomes.size() - 1; j >= this.populationSize; j--) {
+            this.chromosomes.remove(j);
+        }
     }
-    */
+    
 
     public void mutateVariance(){
         Random rand = new Random();
