@@ -1,8 +1,6 @@
 import com.codingame.gameengine.runner.SoloGameRunner;
 import com.codingame.gameengine.runner.dto.GameResult;
 
-import org.yaml.snakeyaml.scanner.Constant;
-
 import java.util.*;
 
 
@@ -19,12 +17,11 @@ public class MuPlusLambda {
 	 * Random inicialization of the population
 	 */
     public MuPlusLambda() {
-        //C-- Bueno esto sobra si ya creamos un fichero así nosotros, pero viene bien porer Mu para diferenciar
         Chromosome c0 = new Chromosome("files/chromosome2.csv");
+        c0.fitness = getFitness(c0);
         c0.writeChromosome("files/Mu_chromosome0.csv");
         this.chromosomes.add(c0);
 
-        //C-- No entiendo el i=1 mero bueno es un poco toc y ya
         for (int i = 1; i < this.populationSize; i++) {
             Chromosome c = new Chromosome(this.chromosomes.get(i - 1));
             c.writeChromosome("files/Mu_chromosome" + i + ".csv");
@@ -33,10 +30,18 @@ public class MuPlusLambda {
         }
     }
 
+    public void execute(int cicles) {
+        for (int i = 0; i < cicles; i++) {
+            this.evolution();
+            this.mutateVariance();
+        }
+    }
+
     /**
      * this method generates "lambda" new individuals, sort the population and select the best ones
      */
     public void evolution(){
+		Random rand = new Random();
         //C-- Este método no es como execute, sólo sería para un ciclo
         //C-- La mayor parte del código sirve para inicializar un cromosoma, me dan ganas de meterlo en esa clase
         // generate as much individuals as lambda 
@@ -46,30 +51,9 @@ public class MuPlusLambda {
             //C-- Aquí renta crear un nuevo constructor a aprtir de dos padres
             //C-- Hay cruce pero no veo mutación.
             Chromosome newChromosome = new Chromosome("files/chromosome2.csv");
-            
-            // values for distanceRanges for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).distanceRanges.length; i++){
-                double newGen = (this.chromosomes.get(i).distanceRanges[j] + this.chromosomes.get(i+1).distanceRanges[j]) / 2;
-                newChromosome.distanceRanges[j] = newGen;
-            }
-            
-            // values for angleRanges for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).angleRanges.length; i++){
-                double newGen = (this.chromosomes.get(i).angleRanges[j] + this.chromosomes.get(i+1).angleRanges[j]) / 2;
-                newChromosome.angleRanges[j] = newGen;
-            }
-            
-            // values for thrustInRange for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).thrustInRange.length; i++){
-                for (int k = 0; k < this.chromosomes.get(i).thrustInRange[j].length; k++){
-                    double newGen = (this.chromosomes.get(i).thrustInRange[j][k] + this.chromosomes.get(i+1).thrustInRange[j][k]) / 2;
-                    newChromosome.thrustInRange[j][k] = newGen;
-                }    
-            }
 
             // values of varianceDistance for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).varianceDistance.length; i++){
-
+            for (int j = 0; j < this.chromosomes.get(i).varianceDistance.length; j++){
                 if ( Math.floor(Math.random()*2) == 0){
                     newChromosome.varianceDistance[j] = this.chromosomes.get(i).varianceDistance[j];
                 } else {
@@ -78,7 +62,7 @@ public class MuPlusLambda {
             }
 
             // values of VarianceAngle for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).varianceAngle.length; i++){
+            for (int j = 0; j < this.chromosomes.get(i).varianceAngle.length; j++){
                 if ( Math.floor(Math.random()*2) == 0){
                     newChromosome.varianceAngle[j] = this.chromosomes.get(i).varianceAngle[j];
                 } else {
@@ -87,13 +71,38 @@ public class MuPlusLambda {
             }
 
             // values of varianceThrust for the new individual
-            for (int j = 0; j < this.chromosomes.get(i).varianceThrust.length; i++){
+            for (int j = 0; j < this.chromosomes.get(i).varianceThrust.length; j++){
                 for (int k = 0; k < this.chromosomes.get(i).varianceThrust[j].length; k++){
                     if ( Math.floor(Math.random()*2) == 0){
                         newChromosome.varianceThrust[j][k] = this.chromosomes.get(i).varianceThrust[j][k];
                     } else {
                         newChromosome.varianceThrust[j][k] = this.chromosomes.get(i+1).varianceThrust[j][k];
                     }
+                }    
+            }
+            
+            // values for distanceRanges for the new individual
+            for (int j = 0; j < this.chromosomes.get(i).distanceRanges.length; j++){
+                double newGen = (this.chromosomes.get(i).distanceRanges[j] + this.chromosomes.get(i+1).distanceRanges[j]) / 2;
+                newGen = Math.abs(newGen + rand.nextGaussian() * newChromosome.varianceDistance[j]);
+                newChromosome.distanceRanges[j] = newGen;
+            }
+            
+            // values for angleRanges for the new individual
+            for (int j = 0; j < this.chromosomes.get(i).angleRanges.length; j++){
+                double newGen = (this.chromosomes.get(i).angleRanges[j] + this.chromosomes.get(i+1).angleRanges[j]) / 2;
+                newGen = Math.abs(newGen + rand.nextGaussian() * newChromosome.varianceAngle[j]);
+                newGen = (newGen+360)%360;
+                newChromosome.angleRanges[j] = newGen;
+            }
+            
+            // values for thrustInRange for the new individual
+            for (int j = 0; j < this.chromosomes.get(i).thrustInRange.length; j++){
+                for (int k = 0; k < this.chromosomes.get(i).thrustInRange[j].length; k++){
+                    double newGen = (this.chromosomes.get(i).thrustInRange[j][k] + this.chromosomes.get(i+1).thrustInRange[j][k]) / 2;
+                    newGen = Math.abs(newGen + rand.nextGaussian() * newChromosome.varianceThrust[j][k]);
+                    newGen = Math.min(newGen, 200);
+                    newChromosome.thrustInRange[j][k] = newGen;
                 }    
             }
 
@@ -108,10 +117,20 @@ public class MuPlusLambda {
         //C-- No sé si esto ordenará por fitness, en plan, cómo sabe que es por fitness? Por el compareTo en Chromosome?
         Collections.sort(this.chromosomes);
 
+        /*
+        for(int i=0; i<this.chromosomes.size(); i++){
+            System.err.println(this.chromosomes.get(i).fitness);
+        }
+        int[] a = {};
+        int b = a[0];
+        */
+
         // remove the last "lambda" indiviuduals from the population
         for (int j = this.chromosomes.size() - 1; j >= this.populationSize; j--) {
             this.chromosomes.remove(j);
         }
+
+        this.chromosomes.get(0).writeChromosome("files/chromosome1.csv");
     }
     
 
@@ -123,21 +142,21 @@ public class MuPlusLambda {
         for (int i = 0; i < this.populationSize; i++) {
 
             // iterate over varianceDistance
-            for (int j = 0; j < this.chromosomes.get(i).varianceDistance.length; i++){
+            for (int j = 0; j < this.chromosomes.get(i).varianceDistance.length; j++){
 			    this.chromosomes.get(i).varianceDistance[j]  = (Math.pow(Math.E, rand.nextGaussian() * this.learningRate0)) 
                                                             * this.chromosomes.get(i).varianceDistance[j]
                                                             * (Math.pow(Math.E, rand.nextGaussian() * this.learningRate));
             }
 
             // iterate over varianceAngle
-            for (int j = 0; j < this.chromosomes.get(i).varianceAngle.length; i++) {
+            for (int j = 0; j < this.chromosomes.get(i).varianceAngle.length; j++) {
                 this.chromosomes.get(i).varianceAngle[j] = (Math.pow(Math.E, rand.nextGaussian() * this.learningRate0)) 
                                                         * this.chromosomes.get(i).varianceAngle[j]
                                                         * (Math.pow(Math.E, rand.nextGaussian() * this.learningRate));
             }
                 
             // iterate over varianceThrust
-            for (int j = 0; i < this.chromosomes.get(i).varianceThrust.length; i++){
+            for (int j = 0; j < this.chromosomes.get(i).varianceThrust.length; j++){
                 for (int k = 0; k < this.chromosomes.get(i).varianceThrust[j].length; k++){
                     this.chromosomes.get(i).varianceThrust[j][k] = (Math.pow(Math.E, rand.nextGaussian() * this.learningRate0)) 
                                                                 * this.chromosomes.get(i).varianceThrust[j][k]
@@ -155,9 +174,8 @@ public class MuPlusLambda {
 	 * @return fitness: puntuación del individuo.
 	 */
 	private float getFitness(Chromosome c) {
-        //C-- Esto parece estar como siempre, ya está
 		// Inicia la ejecución del individuo y obtiene su fitness
-		c.writeChromosome("chromosome.csv");
+		c.writeChromosome("files/chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
 		gameRunner.setTestCase("test0.json");

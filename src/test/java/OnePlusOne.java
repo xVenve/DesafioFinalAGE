@@ -84,7 +84,7 @@ public class OnePlusOne {
 	 */
 	private float getFitness(Chromosome c) {
 		// Inicia la ejecución del individuo y obtiene su fitness
-		c.writeChromosome("chromosome.csv");
+		c.writeChromosome("files/chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
 		gameRunner.setTestCase("test0.json");

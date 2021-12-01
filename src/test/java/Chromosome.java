@@ -11,7 +11,7 @@ public class Chromosome implements Comparable<Chromosome>{
 	public double[] varianceDistance;
 	public double[] varianceAngle;
 	public double[][] varianceThrust;
-	public double fitness = 0.0;
+	public double fitness = 100000.0;
 
 	/**
 	 * Constructor para inicializar cormosoma aleatoriamente
@@ -74,6 +74,63 @@ public class Chromosome implements Comparable<Chromosome>{
 		}
 
 		writeChromosome("chromosome.csv");
+	}
+
+	public Chromosome(Chromosome c1, Chromosome c2){
+		Random rand = new Random();
+
+		this.varianceDistance = new double[c1.varianceDistance.length];
+		for (int i = 0; i < this.varianceDistance.length; i++){
+			if (Math.random()*2 < 1){
+				this.varianceDistance[i] = c1.varianceDistance[i];
+			} else {
+				this.varianceDistance[i] = c2.varianceDistance[i];
+			}
+		}
+
+		this.varianceAngle = new double[c1.varianceAngle.length];
+		for (int i = 0; i < this.varianceAngle.length; i++){
+			if (Math.random()*2 < 1){
+				this.varianceAngle[i] = c1.varianceAngle[i];
+			} else {
+				this.varianceAngle[i] = c2.varianceAngle[i];
+			}
+		}
+
+		this.varianceThrust = new double[c1.varianceThrust.length][c1.varianceThrust[0].length];
+		for (int i = 0; i < this.varianceThrust.length; i++){
+			for (int j = 0; j < this.varianceThrust[i].length; j++) {
+				if (Math.random() * 2 < 1) {
+					this.varianceThrust[i][j] = c1.varianceThrust[i][j];
+				} else {
+					this.varianceThrust[i][j] = c2.varianceThrust[i][j];
+				}
+			}
+		}
+
+		// Mutación del vector de distancias
+		this.distanceRanges = new double[c1.distanceRanges.length];
+		for (int i = 0; i < this.distanceRanges.length; i++) {
+			this.distanceRanges[i] = (c1.distanceRanges[i] + c2.distanceRanges[i]) / 2;
+			this.distanceRanges[i] = Math.abs(this.distanceRanges[i] + rand.nextGaussian() * this.varianceDistance[i]);
+		}
+
+		this.angleRanges = new double[c1.angleRanges.length];
+		for (int i = 0; i < this.angleRanges.length; i++) {
+			this.angleRanges[i] = (c1.angleRanges[i] + c2.angleRanges[i]) / 2;
+			this.angleRanges[i] = Math.abs(this.angleRanges[i] + rand.nextGaussian() * this.varianceAngle[i]);
+			this.angleRanges[i] = (this.angleRanges[i]+360)%360;
+		}
+
+		this.thrustInRange = new double[c1.thrustInRange.length][c1.thrustInRange[0].length];
+		for (int i = 0; i < this.thrustInRange.length; i++) {
+			for (int j = 0; j < this.thrustInRange[i].length; j++) {
+				this.thrustInRange[i][j] = (c1.thrustInRange[i][j] + c2.thrustInRange[i][j]) / 2;
+				this.thrustInRange[i][j] = Math.abs(this.thrustInRange[i][j] + rand.nextGaussian() * this.thrustInRange[i][j]);
+				this.thrustInRange[i][j] = Math.min(this.thrustInRange[i][j], 200);
+			}
+		}
+
 	}
 
 	/**
