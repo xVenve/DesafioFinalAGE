@@ -15,7 +15,7 @@ public class Chromosome implements Comparable<Chromosome>{
 
 	/**
 	 * Constructor para inicializar cormosoma aleatoriamente
-	 * 
+	 *
 	 * @param sizeDis:   tamaño del rango de distancias
 	 * @param sizeAngle: tamaño del rango de ángulos
 	 */
@@ -34,7 +34,7 @@ public class Chromosome implements Comparable<Chromosome>{
 
 	/**
 	 * Crea un individuo a partir del padre y muta.
-	 * 
+	 *
 	 * @param c: cromosoma del padre
 	 */
 	public Chromosome(Chromosome c) {
@@ -48,18 +48,15 @@ public class Chromosome implements Comparable<Chromosome>{
 
 		// Mutacion vector de angulos
 		this.angleRanges = new double[c.angleRanges.length];
-		for (int i = 0; i < c.angleRanges.length; i++) {
+		for (int i = 0; i < c.angleRanges.length; i++)
 			this.angleRanges[i] = (c.angleRanges[i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
-		}
 
 		// Mutacion vector de velocidades
 		this.thrustInRange = new double[c.thrustInRange.length][c.thrustInRange[0].length];
 
-		for (int i = 0; i < c.thrustInRange.length; i++) {
-			for (int j = 0; j < c.thrustInRange[0].length; j++) {
+		for (int i = 0; i < c.thrustInRange.length; i++)
+			for (int j = 0; j < c.thrustInRange[0].length; j++)
 				this.thrustInRange[i][j] = Math.min(Math.abs(c.thrustInRange[i][j] + rand.nextGaussian() * c.varianceThrust[i][j]), 200);
-			}
-		}
 
 		// Copia de varianzas
 		this.varianceDistance = new double[c.varianceDistance.length];
@@ -69,44 +66,35 @@ public class Chromosome implements Comparable<Chromosome>{
 		System.arraycopy(c.varianceAngle, 0, this.varianceAngle, 0, c.varianceAngle.length);
 
 		this.varianceThrust = new double[c.varianceThrust.length][c.varianceThrust[0].length];
-		for (int i = 0; i < this.varianceThrust.length; i++) {
+		for (int i = 0; i < this.varianceThrust.length; i++)
 			System.arraycopy(c.varianceThrust[i], 0, this.varianceThrust[i], 0, this.varianceThrust[i].length);
-		}
 
 		writeChromosome("chromosome.csv");
 	}
 
+	/**
+	 * Crea un cromosoma a partir de dos padres. Luego lo muta.
+	 * @param c1: padre 1
+	 * @param c2: padre 2
+	 */
 	public Chromosome(Chromosome c1, Chromosome c2){
 		Random rand = new Random();
 
 		this.varianceDistance = new double[c1.varianceDistance.length];
-		for (int i = 0; i < this.varianceDistance.length; i++){
-			if (Math.random()*2 < 1){
-				this.varianceDistance[i] = c1.varianceDistance[i];
-			} else {
-				this.varianceDistance[i] = c2.varianceDistance[i];
-			}
-		}
+		for (int i = 0; i < this.varianceDistance.length; i++)
+			if (Math.random()*2 < 1)	this.varianceDistance[i] = c1.varianceDistance[i];
+			else	this.varianceDistance[i] = c2.varianceDistance[i];
 
 		this.varianceAngle = new double[c1.varianceAngle.length];
-		for (int i = 0; i < this.varianceAngle.length; i++){
-			if (Math.random()*2 < 1){
-				this.varianceAngle[i] = c1.varianceAngle[i];
-			} else {
-				this.varianceAngle[i] = c2.varianceAngle[i];
-			}
-		}
+		for (int i = 0; i < this.varianceAngle.length; i++)
+			if (Math.random()*2 < 1)	this.varianceAngle[i] = c1.varianceAngle[i];
+			else	this.varianceAngle[i] = c2.varianceAngle[i];
 
 		this.varianceThrust = new double[c1.varianceThrust.length][c1.varianceThrust[0].length];
-		for (int i = 0; i < this.varianceThrust.length; i++){
-			for (int j = 0; j < this.varianceThrust[i].length; j++) {
-				if (Math.random() * 2 < 1) {
-					this.varianceThrust[i][j] = c1.varianceThrust[i][j];
-				} else {
-					this.varianceThrust[i][j] = c2.varianceThrust[i][j];
-				}
-			}
-		}
+		for (int i = 0; i < this.varianceThrust.length; i++)
+			for (int j = 0; j < this.varianceThrust[i].length; j++)
+				if (Math.random() * 2 < 1)	this.varianceThrust[i][j] = c1.varianceThrust[i][j];
+				else	this.varianceThrust[i][j] = c2.varianceThrust[i][j];
 
 		// Mutación del vector de distancias
 		this.distanceRanges = new double[c1.distanceRanges.length];
@@ -123,19 +111,17 @@ public class Chromosome implements Comparable<Chromosome>{
 		}
 
 		this.thrustInRange = new double[c1.thrustInRange.length][c1.thrustInRange[0].length];
-		for (int i = 0; i < this.thrustInRange.length; i++) {
+		for (int i = 0; i < this.thrustInRange.length; i++)
 			for (int j = 0; j < this.thrustInRange[i].length; j++) {
 				this.thrustInRange[i][j] = (c1.thrustInRange[i][j] + c2.thrustInRange[i][j]) / 2;
 				this.thrustInRange[i][j] = Math.abs(this.thrustInRange[i][j] + rand.nextGaussian() * this.thrustInRange[i][j]);
 				this.thrustInRange[i][j] = Math.min(this.thrustInRange[i][j], 200);
 			}
-		}
-
 	}
 
 	/**
 	 * Crea un cormosoma a partir de la información de un CSV
-	 * 
+	 *
 	 * @param path: ruta del fichero CSV
 	 */
 	public Chromosome(String path) {
@@ -167,18 +153,15 @@ public class Chromosome implements Comparable<Chromosome>{
 	}
 
 	/**
-     * this function allow us to sort a list of Chromosomes
-     */
+	 * Función que ayuda a ordenar la lista de cromosomas según el fitness.
+	 * @param c: cromosoma a comparar con este
+	 * @return -1, 0, 1: dependiendo si la comparación resulta menor, igual o mayor.
+	 */
     @Override
     public int compareTo (Chromosome c){
-        if(c.fitness > this.fitness){
-			return -1;
-		} else if (c.fitness == this.fitness) {
-			return 0;
-		} else {
-			return 1;
-		}
+		return Double.compare(this.fitness, c.fitness);
     }
+
 	/**
 	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
 	 */
@@ -230,19 +213,9 @@ public class Chromosome implements Comparable<Chromosome>{
 		}
 	}
 
-	/*
-	public void copyChromosome(Chromosome c) {
-		System.arraycopy(c.distanceRanges, 0, this.distanceRanges, 0, c.distanceRanges.length);
-		System.arraycopy(c.angleRanges, 0, this.angleRanges, 0, c.angleRanges.length);
-		for (int i = 0; i < this.varianceThrust.length; i++) {
-			System.arraycopy(c.thrustInRange[i], 0, this.thrustInRange[i], 0, this.thrustInRange[i].length);
-		}
-	}
-	 */
-
 	/**
 	 * Convierte la entrada String del csv a un array de double.
-	 * 
+	 *
 	 * @param values: valores del csv en formato String.
 	 * @return convertedValues: array de valores en formato double.
 	 */
@@ -255,7 +228,7 @@ public class Chromosome implements Comparable<Chromosome>{
 
 	/**
 	 * Guarda la información de un cromosoma en formato csv.
-	 * 
+	 *
 	 * @param file: fichero en el que se copia el individuo.
 	 */
 	public void writeChromosome(String file) {

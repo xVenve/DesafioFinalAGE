@@ -5,7 +5,7 @@ public class SkeletonMain {
 	public static void main(String[] args) {
 		// Uncomment this section and comment the other one to create a Solo Game
 		trainMuPlusLambda();
-		//run();
+		run();
 	}
 
 	/**
@@ -22,7 +22,7 @@ public class SkeletonMain {
 	 */
 	public static void trainMuPlusLambda() {
 		MuPlusLambda evolutivo = new MuPlusLambda();
-		evolutivo.execute(2);
+		evolutivo.execute(100);
 		System.err.println(evolutivo.chromosomes.get(0).fitness);
 	}
 
