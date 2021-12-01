@@ -8,8 +8,10 @@ public class AgentEE {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		Chromosome solution = new Chromosome("files/chromosome.csv");
-		Arrays.sort(solution.distanceRanges);
-		Arrays.sort(solution.angleRanges);
+		Arrays.sort(solution.distanceRanges[0]);
+		Arrays.sort(solution.angleRanges[0]);
+		Arrays.sort(solution.distanceRanges[1]);
+		Arrays.sort(solution.angleRanges[1]);
 
 		Rules rules = new Rules();
 		int checkpoints = Integer.parseInt(scanner.nextLine());
@@ -30,13 +32,16 @@ public class AgentEE {
 			// int vy = Integer.parseInt(input[4]);
 			int angle = Integer.parseInt(input[5]);
 			Point targ = targets.get(target);
+			Point targ2 = targets.get((target + 1) % targets.size());
 			Point current = new Point(x, y);
 
 			// Calcula distancia al siguiente punto y ángulo relativo de la nave con el
 			// siguiente punto
 			double distance = current.distance(targ);
+			double distance2 = current.distance(targ2);
 			double relAngle = current.relativeAngle(angle, targ);
-			int thrust = (int) rules.getThrust(distance, relAngle, solution);
+			double relAngle2 = current.relativeAngle(angle, targ2);
+			int thrust = (int) rules.getThrust(distance, distance2, relAngle, relAngle2, solution);
 			System.err.println("Distance: " + (int) distance + "\nAngle: " + (int) relAngle + "\nThrust: " + thrust);
 
 			System.out.println(targ.x + " " + targ.y + " " + thrust + " Agent EE"); // X Y THRUST MESSAGE
@@ -99,18 +104,44 @@ public class AgentEE {
 		 * @param solution: cromosoma usado para la decisión.
 		 * @return thrust: la velocidad que llevará la nave.
 		 */
-		public double getThrust(double distance, double angle, Chromosome solution) {
-			for (int i = 0; i <= solution.distanceRanges.length; i++) {
+		public double getThrust(double distance, double distance2, double angle, double angle2, Chromosome solution) {
+			for (int i = 0; i <= solution.distanceRanges[0].length; i++) {
 				double dr = 160000;
-				if (i < solution.distanceRanges.length) dr = solution.distanceRanges[i];
-
+				if (i < solution.distanceRanges[0].length)
+					dr = solution.distanceRanges[0][i];
 				if (distance < dr)
-					for (int j = 0; j <= solution.angleRanges.length; j++) {
+					for (int j = 0; j <= solution.angleRanges[0].length; j++) {
 						double ag = 360;
-						if (j < solution.angleRanges.length) ag = solution.angleRanges[j];
-						if (angle < ag) return solution.thrustInRange[i][j];
+						if (j < solution.angleRanges[0].length) ag = solution.angleRanges[0][j];
+						if (angle < ag)
+							for (int i2 = 0; i2 <= solution.distanceRanges[1].length; i2++) {
+								double dr2 = 160000;
+								if (i2 < solution.distanceRanges[1].length) dr2 = solution.distanceRanges[1][i2];
+								if (distance2 < dr2) {
+									for (int j2 = 0; j2 <= solution.angleRanges[0].length; j2++) {
+										double ag2 = 360;
+										if (j2 < solution.angleRanges[0].length) ag2 = solution.angleRanges[0][j2];
+										if (angle2 < ag2) return solution.thrustInRange[i][j][i2][j2];
+									}
+								}
+							}
 					}
 			}
+
+			/*
+			 * for (int i = 0; i <= solution.distanceRanges[0].length; i++) {
+			 * double dr = 160000;
+			 * if (i < solution.distanceRanges[0].length) dr =
+			 * solution.distanceRanges[0][i];
+			 * 
+			 * if (distance < dr)
+			 * for (int j = 0; j <= solution.angleRanges[0].length; j++) {
+			 * double ag = 360;
+			 * if (j < solution.angleRanges[0].length) ag = solution.angleRanges[0][j];
+			 * if (angle < ag) return solution.thrustInRange[i][j];
+			 * }
+			 * }
+			 */
 			return 0;
 		}
 	}

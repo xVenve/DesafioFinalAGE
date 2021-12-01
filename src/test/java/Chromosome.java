@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Chromosome {
-	public double[] distanceRanges; // 0 - 16000
-	public double[] angleRanges; // 0 - 360
-	public double[][] thrustInRange; // 0 - 200
+	public double[][] distanceRanges; // 0 - 16000
+	public double[][] angleRanges; // 0 - 360
+	public double[][][][] thrustInRange; // 0 - 200
 
 	public double[] varianceDistance;
 	public double[] varianceAngle;
@@ -22,9 +22,10 @@ public class Chromosome {
 	 * @param sizeAngle: tamaño del rango de ángulos
 	 */
 	public Chromosome(int sizeDis, int sizeAngle) {
-		this.distanceRanges = new double[sizeDis];
-		this.angleRanges = new double[sizeAngle];
-		this.thrustInRange = new double[sizeDis + 1][sizeAngle + 1];
+		this.distanceRanges = new double[2][sizeDis];
+		this.angleRanges = new double[2][sizeAngle];
+
+		this.thrustInRange = new double[sizeDis + 1][sizeAngle + 1][sizeDis + 1][sizeAngle + 1];
 
 		this.varianceDistance = new double[sizeDis];
 		this.varianceAngle = new double[sizeAngle];
@@ -43,24 +44,32 @@ public class Chromosome {
 		Random rand = new Random();
 
 		// Mutación del vector de distancias
-		this.distanceRanges = new double[c.distanceRanges.length];
-		for (int i = 0; i < c.distanceRanges.length; i++) {
-			this.distanceRanges[i] = Math.abs(c.distanceRanges[i] + rand.nextGaussian() * c.varianceDistance[i]);
+		this.distanceRanges = new double[2][c.distanceRanges[0].length];
+		for (int i = 0; i < c.distanceRanges[0].length; i++) {
+			this.distanceRanges[0][i] = Math.abs(c.distanceRanges[0][i] + rand.nextGaussian() * c.varianceDistance[i]);
+			this.distanceRanges[1][i] = Math.abs(c.distanceRanges[1][i] + rand.nextGaussian() * c.varianceDistance[i]);
 		}
 
 		// Mutacion vector de angulos
-		this.angleRanges = new double[c.angleRanges.length];
-		for (int i = 0; i < c.angleRanges.length; i++) {
-			this.angleRanges[i] = (c.angleRanges[i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
-			this.angleRanges[i] = (this.angleRanges[i]+360) % 360;
+		this.angleRanges = new double[2][c.angleRanges[0].length];
+		for (int i = 0; i < c.angleRanges[0].length; i++) {
+			this.angleRanges[0][i] = (c.angleRanges[0][i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
+			this.angleRanges[0][i] = (this.angleRanges[0][i] + 360) % 360;
+			this.angleRanges[1][i] = (c.angleRanges[1][i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
+			this.angleRanges[1][i] = (this.angleRanges[1][i] + 360) % 360;
 		}
 
 		// Mutacion vector de velocidades
-		this.thrustInRange = new double[c.thrustInRange.length][c.thrustInRange[0].length];
+		this.thrustInRange = new double[c.thrustInRange.length][c.thrustInRange[0].length][c.thrustInRange[0][0].length][c.thrustInRange[0][0][0].length];
 
 		for (int i = 0; i < c.thrustInRange.length; i++) {
 			for (int j = 0; j < c.thrustInRange[0].length; j++) {
-				this.thrustInRange[i][j] = Math.min(Math.abs(c.thrustInRange[i][j] + rand.nextGaussian() * c.varianceThrust[i][j]), 200);
+				for (int i2 = 0; i2 < c.thrustInRange[0][0].length; i2++) {
+					for (int j2 = 0; j2 < c.thrustInRange[0][0][0].length; j2++) {
+						this.thrustInRange[i][j][i2][j2] = Math.min(Math.abs(
+								c.thrustInRange[i][j][i2][j2] + rand.nextGaussian() * c.varianceThrust[i2][j2]), 200);
+					}
+				}
 			}
 		}
 
@@ -83,21 +92,32 @@ public class Chromosome {
 	 * @param path: ruta del fichero CSV
 	 */
 	public Chromosome(String path) {
+		this.distanceRanges = new double[2][];
+		this.angleRanges = new double[2][];
 		try {
 			FileReader fileReader = new FileReader(path);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
 			String distanceRangesLine = bufferedReader.readLine();
 			int numDistanceRanges = distanceRangesLine.split(",").length;
-			this.distanceRanges = convertToDouble(distanceRangesLine.split(","));
+			this.distanceRanges[0] = convertToDouble(distanceRangesLine.split(","));
+			distanceRangesLine = bufferedReader.readLine();
+			this.distanceRanges[1] = convertToDouble(distanceRangesLine.split(","));
 
 			String angleRangesLine = bufferedReader.readLine();
 			int numAngleRanges = angleRangesLine.split(",").length;
-			this.angleRanges = convertToDouble(angleRangesLine.split(","));
+			this.angleRanges[0] = convertToDouble(angleRangesLine.split(","));
+			angleRangesLine = bufferedReader.readLine();
+			this.angleRanges[1] = convertToDouble(angleRangesLine.split(","));
 
-			this.thrustInRange = new double[numDistanceRanges + 1][numAngleRanges + 1];
+			this.thrustInRange = new double[numDistanceRanges + 1][numAngleRanges + 1][numDistanceRanges
+					+ 1][numAngleRanges + 1];
 			for (int i = 0; i < numDistanceRanges + 1; i++) {
-				this.thrustInRange[i] = convertToDouble(bufferedReader.readLine().split(","));
+				for (int j = 0; j < numAngleRanges + 1; j++) {
+					for (int i2 = 0; i2 < numDistanceRanges + 1; i2++) {
+						this.thrustInRange[i][j][i2] = convertToDouble(bufferedReader.readLine().split(","));
+					}
+				}
 			}
 			this.varianceDistance = new double[numDistanceRanges];
 			this.varianceAngle = new double[numAngleRanges];
@@ -119,20 +139,26 @@ public class Chromosome {
 		// Inicialización del vector de rangos de distancias
 		double distanceMax = 4000.0;
 		for (int i = 0; i < this.distanceRanges.length; i++) {
-			this.distanceRanges[i] = (distanceMax) * rand.nextDouble();
+			this.distanceRanges[0][i] = (distanceMax) * rand.nextDouble();
+			this.distanceRanges[1][i] = (distanceMax) * rand.nextDouble();
 		}
 
 		// Inicialización del vector de rangos de angulos
 		double angleMax = 360.0;
 		for (int i = 0; i < this.angleRanges.length; i++) {
-			this.angleRanges[i] = (angleMax) * rand.nextDouble();
+			this.angleRanges[0][i] = (angleMax) * rand.nextDouble();
+			this.angleRanges[1][i] = (angleMax) * rand.nextDouble();
 		}
 
 		// Inicialización matriz de aceleración
 		double thrustMax = 200.0;
-		for (int i = 0; i < thrustInRange.length; i++) {
+		for (int i = 0; i < this.thrustInRange.length; i++) {
 			for (int j = 0; j < this.thrustInRange[i].length; j++) {
-				this.thrustInRange[i][j] = (thrustMax) * rand.nextDouble();
+				for (int i2 = 0; i2 < this.thrustInRange[i][j].length; i2++) {
+					for (int j2 = 0; j2 < this.thrustInRange[i][j][i2].length; j2++) {
+						this.thrustInRange[i][j][i2][j2] = (thrustMax) * rand.nextDouble();
+					}
+				}
 			}
 		}
 	}
@@ -141,7 +167,7 @@ public class Chromosome {
 	 * Inicializa las varianzas aleatoriamente
 	 */
 	public void initializeVariances() {
-		//En orden: distancia, ángulo, aceleración
+		// En orden: distancia, ángulo, aceleración
 		double[][] stndDer = { { 500, 3000 }, { 10, 180 }, { 50, 150 } };
 
 		// Inicialización vector de varianzas de distancias
@@ -161,16 +187,6 @@ public class Chromosome {
 			}
 		}
 	}
-
-	/*
-	public void copyChromosome(Chromosome c) {
-		System.arraycopy(c.distanceRanges, 0, this.distanceRanges, 0, c.distanceRanges.length);
-		System.arraycopy(c.angleRanges, 0, this.angleRanges, 0, c.angleRanges.length);
-		for (int i = 0; i < this.varianceThrust.length; i++) {
-			System.arraycopy(c.thrustInRange[i], 0, this.thrustInRange[i], 0, this.thrustInRange[i].length);
-		}
-	}
-	 */
 
 	/**
 	 * Convierte la entrada String del csv a un array de double.
@@ -194,29 +210,41 @@ public class Chromosome {
 		FileWriter myWriter;
 		try {
 			myWriter = new FileWriter(file);
-			for (int i = 0; i < this.distanceRanges.length; i++) {
-				if (i == this.distanceRanges.length - 1) {
-					myWriter.write(this.distanceRanges[i] + "\n");
-				} else {
-					myWriter.write(this.distanceRanges[i] + ",");
-				}
-			}
-			for (int i = 0; i < this.angleRanges.length; i++) {
-				if (i == this.angleRanges.length - 1) {
-					myWriter.write(this.angleRanges[i] + "\n");
-				} else {
-					myWriter.write(this.angleRanges[i] + ",");
-				}
-			}
-			for (double[] doubles : this.thrustInRange) {
-				for (int j = 0; j < doubles.length; j++) {
-					if (j == doubles.length - 1) {
-						myWriter.write(doubles[j] + "\n");
+
+			for (int k = 0; k < this.distanceRanges.length; k++) {
+				for (int i = 0; i < this.distanceRanges[k].length; i++) {
+					if (i == this.distanceRanges[k].length - 1) {
+						myWriter.write(this.distanceRanges[k][i] + "\n");
 					} else {
-						myWriter.write(doubles[j] + ",");
+						myWriter.write(this.distanceRanges[k][i] + ",");
 					}
 				}
 			}
+
+			for (int k = 0; k < this.angleRanges.length; k++) {
+				for (int i = 0; i < this.angleRanges[k].length; i++) {
+					if (i == this.angleRanges[k].length - 1) {
+						myWriter.write(this.angleRanges[k][i] + "\n");
+					} else {
+						myWriter.write(this.angleRanges[k][i] + ",");
+					}
+				}
+			}
+
+			for (int i = 0; i < this.thrustInRange.length; i++) {
+				for (int j = 0; j < this.thrustInRange[i].length; j++) {
+					for (int i2 = 0; i2 < this.thrustInRange[i][j].length; i2++) {
+						for (int j2 = 0; j2 < this.thrustInRange[i][j][i2].length; j2++) {
+							if (j2 == this.thrustInRange[i][j][i2].length - 1) {
+								myWriter.write(this.thrustInRange[i][j][i2][j2] + "\n");
+							} else {
+								myWriter.write(this.thrustInRange[i][j][i2][j2] + ",");
+							}
+						}
+					}
+				}
+			}
+
 			myWriter.write(this.fitness + "\n");
 			myWriter.flush();
 			myWriter.close();
