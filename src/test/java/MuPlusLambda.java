@@ -8,7 +8,7 @@ import java.util.*;
 
 public class MuPlusLambda {
 
-    List <Chromosome> chromosomes = new ArrayList<Chromosome>(); // array of chromosomes, represents the population
+    List <Chromosome> chromosomes = new ArrayList<>(); // array of chromosomes, represents the population
 
     final int populationSize = 10; // size of the population
     final int lambda = 12; 
@@ -19,29 +19,32 @@ public class MuPlusLambda {
 	 * Random inicialization of the population
 	 */
     public MuPlusLambda() {
+        //C-- Bueno esto sobra si ya creamos un fichero así nosotros, pero viene bien porer Mu para diferenciar
         Chromosome c0 = new Chromosome("files/chromosome2.csv");
         c0.writeChromosome("files/Mu_chromosome0.csv");
         this.chromosomes.add(c0);
-        
+
+        //C-- No entiendo el i=1 mero bueno es un poco toc y ya
         for (int i = 1; i < this.populationSize; i++) {
-            
             Chromosome c = new Chromosome(this.chromosomes.get(i - 1));
-            c.writeChromosome("files/Mu_chromosome" + String.valueOf(i) + ".csv");
+            c.writeChromosome("files/Mu_chromosome" + i + ".csv");
 		    c.fitness = getFitness(c);
             this.chromosomes.add(c);
         }
-
     }
 
     /**
      * this method generates "lambda" new individuals, sort the population and select the best ones
      */
     public void evolution(){
-        
+        //C-- Este método no es como execute, sólo sería para un ciclo
+        //C-- La mayor parte del código sirve para inicializar un cromosoma, me dan ganas de meterlo en esa clase
         // generate as much individuals as lambda 
         for (int i = 0; i < this.lambda; i++) {
 
-            // chromosome to overwrite 
+            // chromosome to overwrite
+            //C-- Aquí renta crear un nuevo constructor a aprtir de dos padres
+            //C-- Hay cruce pero no veo mutación.
             Chromosome newChromosome = new Chromosome("files/chromosome2.csv");
             
             // values for distanceRanges for the new individual
@@ -101,7 +104,8 @@ public class MuPlusLambda {
            this.chromosomes.add(newChromosome);
         }
         
-        // sort the new population based on fitness 
+        // sort the new population based on fitness
+        //C-- No sé si esto ordenará por fitness, en plan, cómo sabe que es por fitness? Por el compareTo en Chromosome?
         Collections.sort(this.chromosomes);
 
         // remove the last "lambda" indiviuduals from the population
@@ -112,6 +116,7 @@ public class MuPlusLambda {
     
 
     public void mutateVariance(){
+        //C-- Ok pero como cabezón lo pasaba a cromosoma, que no hace más que coger get(i)
         Random rand = new Random();
 
         // iterate over the whole population
@@ -150,6 +155,7 @@ public class MuPlusLambda {
 	 * @return fitness: puntuación del individuo.
 	 */
 	private float getFitness(Chromosome c) {
+        //C-- Esto parece estar como siempre, ya está
 		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("chromosome.csv");
 		SoloGameRunner gameRunner = new SoloGameRunner();
