@@ -17,7 +17,7 @@ public class Chromosome {
 
 	/**
 	 * Constructor para inicializar cormosoma aleatoriamente
-	 * 
+	 *
 	 * @param sizeDis:   tamaño del rango de distancias
 	 * @param sizeAngle: tamaño del rango de ángulos
 	 */
@@ -37,7 +37,7 @@ public class Chromosome {
 
 	/**
 	 * Crea un individuo a partir del padre y muta.
-	 * 
+	 *
 	 * @param c: cromosoma del padre
 	 */
 	public Chromosome(Chromosome c) {
@@ -81,14 +81,62 @@ public class Chromosome {
 		System.arraycopy(c.varianceAngle, 0, this.varianceAngle, 0, c.varianceAngle.length);
 
 		this.varianceThrust = new double[c.varianceThrust.length][c.varianceThrust[0].length];
-		for (int i = 0; i < this.varianceThrust.length; i++) {
+		for (int i = 0; i < this.varianceThrust.length; i++)
 			System.arraycopy(c.varianceThrust[i], 0, this.varianceThrust[i], 0, this.varianceThrust[i].length);
+
+		writeChromosome("chromosome.csv");
+	}
+
+	/**
+	 * Crea un cromosoma a partir de dos padres. Luego lo muta.
+	 * @param c1: padre 1
+	 * @param c2: padre 2
+	 */
+	public Chromosome(Chromosome c1, Chromosome c2){
+		Random rand = new Random();
+
+		this.varianceDistance = new double[c1.varianceDistance.length];
+		for (int i = 0; i < this.varianceDistance.length; i++)
+			if (Math.random()*2 < 1)	this.varianceDistance[i] = c1.varianceDistance[i];
+			else	this.varianceDistance[i] = c2.varianceDistance[i];
+
+		this.varianceAngle = new double[c1.varianceAngle.length];
+		for (int i = 0; i < this.varianceAngle.length; i++)
+			if (Math.random()*2 < 1)	this.varianceAngle[i] = c1.varianceAngle[i];
+			else	this.varianceAngle[i] = c2.varianceAngle[i];
+
+		this.varianceThrust = new double[c1.varianceThrust.length][c1.varianceThrust[0].length];
+		for (int i = 0; i < this.varianceThrust.length; i++)
+			for (int j = 0; j < this.varianceThrust[i].length; j++)
+				if (Math.random() * 2 < 1)	this.varianceThrust[i][j] = c1.varianceThrust[i][j];
+				else	this.varianceThrust[i][j] = c2.varianceThrust[i][j];
+
+		// Mutación del vector de distancias
+		this.distanceRanges = new double[c1.distanceRanges.length];
+		for (int i = 0; i < this.distanceRanges.length; i++) {
+			this.distanceRanges[i] = (c1.distanceRanges[i] + c2.distanceRanges[i]) / 2;
+			this.distanceRanges[i] = Math.abs(this.distanceRanges[i] + rand.nextGaussian() * this.varianceDistance[i]);
 		}
+
+		this.angleRanges = new double[c1.angleRanges.length];
+		for (int i = 0; i < this.angleRanges.length; i++) {
+			this.angleRanges[i] = (c1.angleRanges[i] + c2.angleRanges[i]) / 2;
+			this.angleRanges[i] = Math.abs(this.angleRanges[i] + rand.nextGaussian() * this.varianceAngle[i]);
+			this.angleRanges[i] = (this.angleRanges[i]+360)%360;
+		}
+
+		this.thrustInRange = new double[c1.thrustInRange.length][c1.thrustInRange[0].length];
+		for (int i = 0; i < this.thrustInRange.length; i++)
+			for (int j = 0; j < this.thrustInRange[i].length; j++) {
+				this.thrustInRange[i][j] = (c1.thrustInRange[i][j] + c2.thrustInRange[i][j]) / 2;
+				this.thrustInRange[i][j] = Math.abs(this.thrustInRange[i][j] + rand.nextGaussian() * this.thrustInRange[i][j]);
+				this.thrustInRange[i][j] = Math.min(this.thrustInRange[i][j], 200);
+			}
 	}
 
 	/**
 	 * Crea un cormosoma a partir de la información de un CSV
-	 * 
+	 *
 	 * @param path: ruta del fichero CSV
 	 */
 	public Chromosome(String path) {
@@ -129,6 +177,16 @@ public class Chromosome {
 		}
 		this.initializeVariances();
 	}
+
+	/**
+	 * Función que ayuda a ordenar la lista de cromosomas según el fitness.
+	 * @param c: cromosoma a comparar con este
+	 * @return -1, 0, 1: dependiendo si la comparación resulta menor, igual o mayor.
+	 */
+    @Override
+    public int compareTo (Chromosome c){
+		return Double.compare(this.fitness, c.fitness);
+    }
 
 	/**
 	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
@@ -190,7 +248,7 @@ public class Chromosome {
 
 	/**
 	 * Convierte la entrada String del csv a un array de double.
-	 * 
+	 *
 	 * @param values: valores del csv en formato String.
 	 * @return convertedValues: array de valores en formato double.
 	 */
@@ -203,7 +261,7 @@ public class Chromosome {
 
 	/**
 	 * Guarda la información de un cromosoma en formato csv.
-	 * 
+	 *
 	 * @param file: fichero en el que se copia el individuo.
 	 */
 	public void writeChromosome(String file) {
