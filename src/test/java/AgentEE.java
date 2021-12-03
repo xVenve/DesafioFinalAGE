@@ -127,21 +127,6 @@ public class AgentEE {
 							}
 					}
 			}
-
-			/*
-			 * for (int i = 0; i <= solution.distanceRanges[0].length; i++) {
-			 * double dr = 160000;
-			 * if (i < solution.distanceRanges[0].length) dr =
-			 * solution.distanceRanges[0][i];
-			 * 
-			 * if (distance < dr)
-			 * for (int j = 0; j <= solution.angleRanges[0].length; j++) {
-			 * double ag = 360;
-			 * if (j < solution.angleRanges[0].length) ag = solution.angleRanges[0][j];
-			 * if (angle < ag) return solution.thrustInRange[i][j];
-			 * }
-			 * }
-			 */
 			return 0;
 		}
 	}
