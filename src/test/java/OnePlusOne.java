@@ -20,7 +20,6 @@ public class OnePlusOne {
 		this.chromosome = new Chromosome("files/chromosome00.csv");
 
 		// Guardado del individuo inicial y ejecución del mismo
-		this.chromosome.writeChromosome("files/chromosome1.csv");
 		this.chromosome.fitness = getFitness(this.chromosome);
 		System.err.println(this.chromosome.fitness);
 	}
@@ -40,7 +39,7 @@ public class OnePlusOne {
 			if (this.chromosome.fitness > hijo.fitness) {
 				this.chromosome = hijo;
 				this.num_mejoras++;
-				this.chromosome.writeChromosome("files/chromosomeX" + i + ".csv");
+				this.chromosome.writeChromosome("files/One_chromosome" + i + ".csv");
 			} else {
 				this.chromosome.writeChromosome("files/chromosome.csv");
 			}
@@ -53,7 +52,6 @@ public class OnePlusOne {
 				this.num_mejoras = 0;
 			}
 		}
-		this.chromosome.writeChromosome("files/chromosome1.csv");
 	}
 
 	/**

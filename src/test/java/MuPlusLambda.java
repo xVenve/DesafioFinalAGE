@@ -18,13 +18,24 @@ public class MuPlusLambda {
     public MuPlusLambda() {
         Chromosome c0 = new Chromosome("files/chromosome00.csv");
         c0.fitness = getFitness(c0);
-        c0.writeChromosome("files/Mu_chromosome0.csv");
+        //c0.writeChromosome("files/Mu_chromosome0.csv");
         this.chromosomes.add(c0);
 
         for (int i = 1; i < this.populationSize; i++) {
             Chromosome c = new Chromosome(this.chromosomes.get(i - 1));
             c.fitness = getFitness(c);
-            c.writeChromosome("files/Mu_chromosome" + i + ".csv");
+            //c.writeChromosome("files/Mu_chromosome" + i + ".csv");
+            this.chromosomes.add(c);
+        }
+    }
+
+    /**
+     * Inicializa con la población del experimento anterior para continuar.
+     */
+    public MuPlusLambda(int x) {
+        for (int i=0; i<this.populationSize; i++){
+            Chromosome c = new Chromosome("files/Mu_chromosome"+i+".csv");
+            c.fitness = getFitness(c);
             this.chromosomes.add(c);
         }
     }
