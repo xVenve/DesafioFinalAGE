@@ -4,8 +4,8 @@ public class SkeletonMain {
 
 	public static void main(String[] args) {
 		// Uncomment this section and comment the other one to create a Solo Game
-		//trainMuPlusLambda();
-		//trainOnePlusOne();
+		// trainMuPlusLambda();
+		// trainOnePlusOne();
 		run();
 	}
 
@@ -23,7 +23,7 @@ public class SkeletonMain {
 	 */
 	public static void trainMuPlusLambda() {
 		MuPlusLambda evolutivo = new MuPlusLambda();
-		//MuPlusLambda evolutivo = new MuPlusLambda(1);
+		// MuPlusLambda evolutivo = new MuPlusLambda(1);
 		evolutivo.execute(50);
 		System.err.println(evolutivo.chromosomes.get(0).fitness);
 	}
@@ -34,7 +34,7 @@ public class SkeletonMain {
 	public static void run() {
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
-		gameRunner.setTestCase("test2.json");
+		gameRunner.setTestCase("test14.json");
 		gameRunner.start();
 		// Simulate
 		// gameRunner.simulate();
