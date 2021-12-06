@@ -13,7 +13,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	public double[] varianceAngle;
 	public double[][] varianceThrust;
 
-	public double fitness = 0.0;
+	public double fitness = 1000.0;
 
 	/**
 	 * Constructor para inicializar cormosoma aleatoriamente
@@ -21,6 +21,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	 * @param sizeDis:   tamaño del rango de distancias
 	 * @param sizeAngle: tamaño del rango de ángulos
 	 */
+	/*
 	public Chromosome(int sizeDis, int sizeAngle) {
 		this.distanceRanges = new double[2][sizeDis];
 		this.angleRanges = new double[2][sizeAngle];
@@ -34,6 +35,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		this.initializeRanges();
 		this.initializeVariances();
 	}
+	 */
 
 	/**
 	 * Crea un individuo a partir del padre y muta.
@@ -203,6 +205,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	/**
 	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
 	 */
+	/*
 	public void initializeRanges() {
 		Random rand = new Random();
 
@@ -232,6 +235,7 @@ public class Chromosome implements Comparable<Chromosome> {
 			}
 		}
 	}
+	 */
 
 	/**
 	 * Inicializa las varianzas aleatoriamente
@@ -281,34 +285,34 @@ public class Chromosome implements Comparable<Chromosome> {
 		try {
 			myWriter = new FileWriter(file);
 
-			for (int k = 0; k < this.distanceRanges.length; k++) {
-				for (int i = 0; i < this.distanceRanges[k].length; i++) {
-					if (i == this.distanceRanges[k].length - 1) {
-						myWriter.write(this.distanceRanges[k][i] + "\n");
+			for (double[] distanceRange : this.distanceRanges) {
+				for (int i = 0; i < distanceRange.length; i++) {
+					if (i == distanceRange.length - 1) {
+						myWriter.write(distanceRange[i] + "\n");
 					} else {
-						myWriter.write(this.distanceRanges[k][i] + ",");
+						myWriter.write(distanceRange[i] + ",");
 					}
 				}
 			}
 
-			for (int k = 0; k < this.angleRanges.length; k++) {
-				for (int i = 0; i < this.angleRanges[k].length; i++) {
-					if (i == this.angleRanges[k].length - 1) {
-						myWriter.write(this.angleRanges[k][i] + "\n");
+			for (double[] angleRange : this.angleRanges) {
+				for (int i = 0; i < angleRange.length; i++) {
+					if (i == angleRange.length - 1) {
+						myWriter.write(angleRange[i] + "\n");
 					} else {
-						myWriter.write(this.angleRanges[k][i] + ",");
+						myWriter.write(angleRange[i] + ",");
 					}
 				}
 			}
 
-			for (int i = 0; i < this.thrustInRange.length; i++) {
-				for (int j = 0; j < this.thrustInRange[i].length; j++) {
-					for (int i2 = 0; i2 < this.thrustInRange[i][j].length; i2++) {
-						for (int j2 = 0; j2 < this.thrustInRange[i][j][i2].length; j2++) {
-							if (j2 == this.thrustInRange[i][j][i2].length - 1) {
-								myWriter.write(this.thrustInRange[i][j][i2][j2] + "\n");
+			for (double[][][] doubles : this.thrustInRange) {
+				for (double[][] aDouble : doubles) {
+					for (double[] value : aDouble) {
+						for (int j2 = 0; j2 < value.length; j2++) {
+							if (j2 == value.length - 1) {
+								myWriter.write(value[j2] + "\n");
 							} else {
-								myWriter.write(this.thrustInRange[i][j][i2][j2] + ",");
+								myWriter.write(value[j2] + ",");
 							}
 						}
 					}

@@ -130,7 +130,7 @@ public class MuPlusLambda {
         for (int i = 0; i < numMapas; i++) {
             SoloGameRunner gameRunner = new SoloGameRunner();
             gameRunner.setAgent(AgentEE.class);
-            gameRunner.setTestCase("test" + i + ".json");
+            gameRunner.setTestCase("train" + i + ".json");
             GameResult gameRunnerResult = gameRunner.simulate();
 
             float fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
