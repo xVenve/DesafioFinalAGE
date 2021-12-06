@@ -124,7 +124,7 @@ public class MuPlusLambda {
         // Inicia la ejecución del individuo y obtiene su fitness
         c.writeChromosome("files/chromosome.csv");
 
-        int numMapas = 10;
+        int numMapas = 14;
         float totalFitness = 0;
 
         for (int i = 0; i < numMapas; i++) {
