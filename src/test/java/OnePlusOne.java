@@ -40,9 +40,8 @@ public class OnePlusOne {
 				this.chromosome = hijo;
 				this.num_mejoras++;
 				this.chromosome.writeChromosome("files/One_chromosome" + i + ".csv");
-			} else {
-				this.chromosome.writeChromosome("files/chromosome.csv");
 			}
+			this.chromosome.writeChromosome("files/chromosome.csv");
 
 			// Mutacion de varianza
 			this.contador++;
@@ -82,21 +81,28 @@ public class OnePlusOne {
 		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("files/chromosome.csv");
 
-		int numMapas = 3;
+		int numMapas = 1;
 		float totalFitness = 0;
 
 		for (int i = 0; i < numMapas; i++) {
-			SoloGameRunner gameRunner = new SoloGameRunner();
-			gameRunner.setAgent(AgentEE.class);
-			gameRunner.setTestCase("train" + i + ".json");
-			GameResult gameRunnerResult = gameRunner.simulate();
+			float fitness = 1000;
+			int numCheckpointCollected = 0;
 
-			float fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
-					gameRunnerResult.metadata.split(":")[1].length() - 3));
+			try {
+				SoloGameRunner gameRunner = new SoloGameRunner();
+				gameRunner.setAgent(AgentEE.class);
+				gameRunner.setTestCase("train" + i + ".json");
+				GameResult gameRunnerResult = gameRunner.simulate();
 
-			// Number of Checkpoints collected
-			int numCheckpointCollected = gameRunnerResult.summaries.size()
-					- Collections.frequency(gameRunnerResult.summaries, "");
+				fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
+						gameRunnerResult.metadata.split(":")[1].length() - 3));
+
+				// Number of Checkpoints collected
+				numCheckpointCollected = gameRunnerResult.summaries.size()
+						- Collections.frequency(gameRunnerResult.summaries, "");
+			} catch (Exception e){
+				System.err.println(e);
+			}
 
 			totalFitness += fitness - 5 * numCheckpointCollected;
 			System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);

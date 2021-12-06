@@ -6,10 +6,10 @@ public class SkeletonMain {
 
 	public static void main(String[] args) {
 		// Uncomment this section and comment the other one to create a Solo Game
-		// trainMuPlusLambda();
+		//trainMuPlusLambda();
 		//trainOnePlusOne();
-		//run();
 		test();
+		//run();
 	}
 
 	/**
@@ -17,7 +17,7 @@ public class SkeletonMain {
 	 */
 	public static void trainOnePlusOne() {
 		OnePlusOne evolutivo = new OnePlusOne();
-		evolutivo.execute(0);
+		evolutivo.execute(100);
 		System.err.println(evolutivo.chromosome.fitness);
 	}
 
@@ -27,7 +27,7 @@ public class SkeletonMain {
 	public static void trainMuPlusLambda() {
 		MuPlusLambda evolutivo = new MuPlusLambda();
 		// MuPlusLambda evolutivo = new MuPlusLambda(1);
-		evolutivo.execute(10);
+		evolutivo.execute(50);
 		System.err.println(evolutivo.chromosomes.get(0).fitness);
 	}
 
@@ -37,7 +37,7 @@ public class SkeletonMain {
 	public static void run() {
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
-		gameRunner.setTestCase("test14.json");
+		gameRunner.setTestCase("test3.json");
 		gameRunner.start();
 		// Simulate
 		// gameRunner.simulate();
@@ -50,13 +50,19 @@ public class SkeletonMain {
 		float[] allFitness = new float[numMapas];
 
 		for (int i = 0; i < numMapas; i++) {
+			float fitness = 1000;
+
+			try {
 			SoloGameRunner gameRunner = new SoloGameRunner();
 			gameRunner.setAgent(AgentEE.class);
 			gameRunner.setTestCase("test" + i + ".json");
 			GameResult gameRunnerResult = gameRunner.simulate();
 
-			float fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
+			fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
 					gameRunnerResult.metadata.split(":")[1].length() - 3));
+			} catch (Exception e){
+				System.err.println(e);
+			}
 
 			totalFitness += fitness;
 			allFitness[i] = fitness;
