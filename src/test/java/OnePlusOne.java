@@ -81,17 +81,17 @@ public class OnePlusOne {
 		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("files/chromosome.csv");
 
-		int numMapas = 1;
+		int [] numMapas = {1,3,6,8,10,14};
 		float totalFitness = 0;
 
-		for (int i = 0; i < numMapas; i++) {
+		for (int i = 0; i < numMapas.length; i++) {
 			float fitness = 1000;
 			int numCheckpointCollected = 0;
 
 			try {
 				SoloGameRunner gameRunner = new SoloGameRunner();
 				gameRunner.setAgent(AgentEE.class);
-				gameRunner.setTestCase("train" + i + ".json");
+				gameRunner.setTestCase("train" + numMapas[i] + ".json");
 				GameResult gameRunnerResult = gameRunner.simulate();
 
 				fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
@@ -108,7 +108,7 @@ public class OnePlusOne {
 			System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
 		}
 
-		System.err.println("Fitness: " + totalFitness / numMapas);
-		return totalFitness / numMapas;
+		System.err.println("Fitness: " + totalFitness / numMapas.length);
+		return totalFitness / numMapas.length;
 	}
 }
