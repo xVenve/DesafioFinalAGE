@@ -31,13 +31,29 @@ public class MuPlusLambda {
 
     /**
      * Inicializa con la población del experimento anterior para continuar.
+     * Reduce la varianza para que simule un descenso previo. Si se empieza de 0 coge los originales
+     * @param prevCicles: número de ciclos que simule que ha descendido la varianza.
      */
-    public MuPlusLambda(int x) {
-        for (int i=0; i<this.populationSize; i++){
-            Chromosome c = new Chromosome("files/Mu_chromosome"+i+".csv");
-            c.fitness = getFitness(c);
-            this.chromosomes.add(c);
-        }
+    public MuPlusLambda(int prevCicles) {
+        if(prevCicles==0)
+            for (int i=0; i<this.populationSize; i++){
+                Chromosome c = new Chromosome("files/Mu_chromosome0"+i+".csv");
+                c.fitness = getFitness(c);
+                this.chromosomes.add(c);
+            }
+        else
+            for (int i=0; i<this.populationSize; i++){
+                Chromosome c = new Chromosome("files/Mu_chromosome"+i+".csv");
+                c.fitness = getFitness(c);
+                this.chromosomes.add(c);
+            }
+
+        for (int i=0; i<prevCicles; i++)
+            mutateVariance();
+
+
+
+
     }
 
     /**
