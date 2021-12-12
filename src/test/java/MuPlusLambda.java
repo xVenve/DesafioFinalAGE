@@ -8,7 +8,7 @@ public class MuPlusLambda {
     List<Chromosome> chromosomes = new ArrayList<>(); // array of chromosomes, represents the population
 
     final int populationSize = 10; // size of the population
-    final int lambda = 12;
+    final int lambda = 10;
     final double learningRate0 = 1 / Math.sqrt(2 * lambda);
     final double learningRate = 1 / Math.sqrt(2 * Math.sqrt(lambda));
 
@@ -50,10 +50,6 @@ public class MuPlusLambda {
 
         for (int i=0; i<prevCicles; i++)
             mutateVariance();
-
-
-
-
     }
 
     /**
