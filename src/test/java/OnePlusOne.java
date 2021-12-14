@@ -1,5 +1,3 @@
-//Al salir de 1+1, ordenar de menor a mayor los rangos de la distancia y los angulos
-
 import java.util.Collections;
 
 import com.codingame.gameengine.runner.SoloGameRunner;
@@ -13,10 +11,9 @@ public class OnePlusOne {
 	int ciclos1_5 = 10;
 
 	/**
-	 * Crea el primer individuo
+	 * Crea el primer individuo a partir de una codificación previa.
 	 */
 	public OnePlusOne() {
-		// this.chromosome = new Chromosome(3, 6);
 		this.chromosome = new Chromosome("files/chromosome00.csv");
 
 		// Guardado del individuo inicial y ejecución del mismo
@@ -31,7 +28,7 @@ public class OnePlusOne {
 	 */
 	public void execute(int cicles) {
 		for (int i = 0; i < cicles; i++) {
-			// Creamos el cromosoma y los escribimos para obtener el fitness
+			// Crea el cromosoma y obtiene el fitness
 			Chromosome hijo = new Chromosome(this.chromosome);
 			hijo.fitness = getFitness(hijo);
 
@@ -43,11 +40,11 @@ public class OnePlusOne {
 			}
 			this.chromosome.writeChromosome("files/chromosome.csv");
 
-			// Mutacion de varianza
+			// Mutación de varianza según la regla 1/5
 			this.contador++;
 			if (this.contador % this.ciclos1_5 == 0) {
 				double v = (double) this.num_mejoras / this.ciclos1_5;
-				mutacionVarianza(v);
+				mutateVariance(v);
 				this.num_mejoras = 0;
 			}
 		}
@@ -58,11 +55,13 @@ public class OnePlusOne {
 	 * 
 	 * @param v: relación de mejora por ciclo.
 	 */
-	private void mutacionVarianza(double v) {
+	private void mutateVariance(double v) {
+		// Decide 'c' según las mejoras entre ciclos
 		double c = 1;
 		if (v < (double) 1 / 5) c = 0.82;
 		else if (v > (double) 1 / 5) c = 1 / 0.82;
 
+		// Muta todas las varianzas
 		for (int i = 0; i < this.chromosome.varianceDistance.length; i++)
 			this.chromosome.varianceDistance[i] *= c;
 		for (int i = 0; i < this.chromosome.varianceAngle.length; i++)
@@ -73,25 +72,29 @@ public class OnePlusOne {
 	}
 
 	/**
-	 * Devuelve el fitness del individuo en función de la partida.
-	 * 
+	 * Devuelve el fitness del individuo en función de los mapas sobre los que se entrene.
+	 *
+	 * @param c:	individuo a evaluar.
 	 * @return fitness: puntuación del individuo.
 	 */
 	private float getFitness(Chromosome c) {
 		// Inicia la ejecución del individuo y obtiene su fitness
 		c.writeChromosome("files/chromosome.csv");
 
-		int [] numMapas = {1,3,6,8,10,14};
+		// Números de los mapas sobre los que se va a entrenar
+		int [] numMapas = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 		float totalFitness = 0;
 
-		for (int i = 0; i < numMapas.length; i++) {
+		for (int numMapa : numMapas) {
 			float fitness = 1000;
 			int numCheckpointCollected = 0;
 
+			// Obtiene la puntuación del mapa
+			// En ocasiones no da un valor correcto, en tal caso el fitness será 1000
 			try {
 				SoloGameRunner gameRunner = new SoloGameRunner();
 				gameRunner.setAgent(AgentEE.class);
-				gameRunner.setTestCase("train" + numMapas[i] + ".json");
+				gameRunner.setTestCase("train" + numMapa + ".json");
 				GameResult gameRunnerResult = gameRunner.simulate();
 
 				fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
@@ -100,14 +103,16 @@ public class OnePlusOne {
 				// Number of Checkpoints collected
 				numCheckpointCollected = gameRunnerResult.summaries.size()
 						- Collections.frequency(gameRunnerResult.summaries, "");
-			} catch (Exception e){
+			} catch (Exception e) {
 				System.err.println(e);
 			}
 
+			// Se mejora el fitness por cada checkpoint tocado y se suma al fitness total
 			totalFitness += fitness - 5 * numCheckpointCollected;
 			System.err.println("Fitness: " + fitness + "\tCheckpoints: " + numCheckpointCollected);
 		}
 
+		// Se devuelve la media del fitness total entre los mapas
 		System.err.println("Fitness: " + totalFitness / numMapas.length);
 		return totalFitness / numMapas.length;
 	}

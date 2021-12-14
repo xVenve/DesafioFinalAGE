@@ -3,11 +3,16 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class AgentEE {
-	// This agent slows down from 200 to 50 when is at 4000 units before reaching
-	// the checkpoint
+	/**
+	 * Este agente opera según el cromosoma de "files/chromosome.csv", la distancia al siguiente punto
+	 * y al siguiente, y el ángulo al siguiente punto y al siguiente. La dirección será el siguiente punto
+	 * y la velocidad depende de las distancias y ángulos.
+	 * @param args: -
+	 */
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		Chromosome solution = new Chromosome("files/chromosome.csv");
+		// Ordena los arrays de menor a mayor.
 		Arrays.sort(solution.distanceRanges[0]);
 		Arrays.sort(solution.angleRanges[0]);
 		Arrays.sort(solution.distanceRanges[1]);
@@ -24,23 +29,23 @@ public class AgentEE {
 		while (true) {
 			String s = scanner.nextLine();
 			String[] input = s.split(" ");
-			// id x y vx vy angle
+			// id x y angle
 			int target = Integer.parseInt(input[0]);
 			int x = Integer.parseInt(input[1]);
 			int y = Integer.parseInt(input[2]);
-			// int vx = Integer.parseInt(input[3]);
-			// int vy = Integer.parseInt(input[4]);
 			int angle = Integer.parseInt(input[5]);
 			Point targ = targets.get(target);
 			Point targ2 = targets.get((target + 1) % targets.size());
 			Point current = new Point(x, y);
 
-			// Calcula distancia al siguiente punto y ángulo relativo de la nave con el
-			// siguiente punto
+			// Calcula distancia y ángulo relativo al siguiente punto.
+			// Hace la misma operación con el punto de después.
 			double distance = current.distance(targ);
 			double distance2 = current.distance(targ2);
 			double relAngle = current.relativeAngle(angle, targ);
 			double relAngle2 = current.relativeAngle(angle, targ2);
+
+			// Calcula la velocidad según los ángulos y distancias.
 			int thrust = (int) rules.getThrust(distance, distance2, relAngle, relAngle2, solution);
 			System.err.println("Distance: " + (int) distance + "\nAngle: " + (int) relAngle + "\nThrust: " + thrust);
 
@@ -63,16 +68,16 @@ public class AgentEE {
 		/**
 		 * Calcula el ángulo relativo de la nave con el siguiente punto.
 		 * 
-		 * @param angle: ángulo que tiene la nave respecto al eje.
-		 * @param p:     punto con coordenadas X e Y al que se tiene que dirigir la
-		 *               nave.
+		 * @param angle:	ángulo que tiene la nave respecto al eje.
+		 * @param p:		punto con coordenadas X e Y al que se tiene que dirigir la
+		 *               	nave.
 		 * @return relAngle: diferencia entre el ángulo de la nave y el punto.
 		 */
 		public double relativeAngle(int angle, Point p) {
 			// Se calcula el seno y el coseno del punto con la nave.
 			double cos = p.x - this.x, sen = p.y - this.y;
 
-			// Se saca el ángulo del arcotantente de sen/cos, a menos que cos sea 0
+			// Se saca el ángulo del arco-tangente de sen/cos, a menos que cos sea 0
 			double pAngle;
 			if (cos == 0) {
 				if (sen > 0)
@@ -82,7 +87,7 @@ public class AgentEE {
 			} else
 				pAngle = Math.atan(sen / cos);
 
-			// Se ajusta el ángulo, pues la arcotangente lo calcula mal.
+			// Se ajusta el ángulo, pues la arco-tangente no tiene en cuenta los ejes.
 			if (sen < 0 && cos < 0)
 				pAngle = -pAngle - 90;
 			else if (sen > 0 && cos < 0)
@@ -98,32 +103,37 @@ public class AgentEE {
 	public static class Rules {
 		/**
 		 * Decide la velocidad a tomar según la distancia y el ángulo.
-		 * 
-		 * @param distance: distancia al siguiente punto.
-		 * @param angle:    ángulo relativo de la nave con el siguiente punto.
-		 * @param solution: cromosoma usado para la decisión.
+		 *
+		 * @param distance:		distancia al siguiente punto.
+		 * @param distance2:	distancia al segundo siguiente punto.
+		 * @param angle:		ángulo relativo de la nave con el siguiente punto.
+		 * @param angle2:		ángulo relativo de la nave con el segundo siguiente punto.
+		 * @param solution:		cromosoma usado para la decisión.
 		 * @return thrust: la velocidad que llevará la nave.
 		 */
 		public double getThrust(double distance, double distance2, double angle, double angle2, Chromosome solution) {
+			// Para cada distancia al primer punto.
 			for (int i = 0; i <= solution.distanceRanges[0].length; i++) {
 				double dr = 160000;
-				if (i < solution.distanceRanges[0].length)
-					dr = solution.distanceRanges[0][i];
+				if (i < solution.distanceRanges[0].length) dr = solution.distanceRanges[0][i];
 				if (distance < dr)
+					// Para cada ángulo del primer punto.
 					for (int j = 0; j <= solution.angleRanges[0].length; j++) {
 						double ag = 360;
 						if (j < solution.angleRanges[0].length) ag = solution.angleRanges[0][j];
 						if (angle < ag)
+							// Para cada distancia del segundo punto.
 							for (int i2 = 0; i2 <= solution.distanceRanges[1].length; i2++) {
 								double dr2 = 160000;
 								if (i2 < solution.distanceRanges[1].length) dr2 = solution.distanceRanges[1][i2];
-								if (distance2 < dr2) {
+								if (distance2 < dr2)
+									//Para cada ángulo del segundo punto.
 									for (int j2 = 0; j2 <= solution.angleRanges[0].length; j2++) {
 										double ag2 = 360;
 										if (j2 < solution.angleRanges[0].length) ag2 = solution.angleRanges[0][j2];
+										// Devuelve la velocidad asociada a las velocidades y ángulos.
 										if (angle2 < ag2) return solution.thrustInRange[i][j][i2][j2];
 									}
-								}
 							}
 					}
 			}

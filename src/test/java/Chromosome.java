@@ -16,31 +16,9 @@ public class Chromosome implements Comparable<Chromosome> {
 	public double fitness = 1000.0;
 
 	/**
-	 * Constructor para inicializar cormosoma aleatoriamente
-	 *
-	 * @param sizeDis:   tamaño del rango de distancias
-	 * @param sizeAngle: tamaño del rango de ángulos
-	 */
-	/*
-	public Chromosome(int sizeDis, int sizeAngle) {
-		this.distanceRanges = new double[2][sizeDis];
-		this.angleRanges = new double[2][sizeAngle];
-
-		this.thrustInRange = new double[sizeDis + 1][sizeAngle + 1][sizeDis + 1][sizeAngle + 1];
-
-		this.varianceDistance = new double[sizeDis];
-		this.varianceAngle = new double[sizeAngle];
-		this.varianceThrust = new double[sizeDis + 1][sizeAngle + 1];
-
-		this.initializeRanges();
-		this.initializeVariances();
-	}
-	 */
-
-	/**
 	 * Crea un individuo a partir del padre y muta.
 	 *
-	 * @param c: cromosoma del padre
+	 * @param c:	cromosoma del padre
 	 */
 	public Chromosome(Chromosome c) {
 		Random rand = new Random();
@@ -52,7 +30,7 @@ public class Chromosome implements Comparable<Chromosome> {
 			this.distanceRanges[1][i] = Math.abs(c.distanceRanges[1][i] + rand.nextGaussian() * c.varianceDistance[i]);
 		}
 
-		// Mutacion vector de angulos
+		// Mutación vector de ángulos
 		this.angleRanges = new double[2][c.angleRanges[0].length];
 		for (int i = 0; i < c.angleRanges[0].length; i++) {
 			this.angleRanges[0][i] = (c.angleRanges[0][i] + rand.nextGaussian() * c.varianceAngle[i]) % 360;
@@ -61,19 +39,14 @@ public class Chromosome implements Comparable<Chromosome> {
 			this.angleRanges[1][i] = (this.angleRanges[1][i] + 360) % 360;
 		}
 
-		// Mutacion vector de velocidades
+		// Mutación vector de velocidades
 		this.thrustInRange = new double[c.thrustInRange.length][c.thrustInRange[0].length][c.thrustInRange[0][0].length][c.thrustInRange[0][0][0].length];
-
-		for (int i = 0; i < c.thrustInRange.length; i++) {
-			for (int j = 0; j < c.thrustInRange[0].length; j++) {
-				for (int i2 = 0; i2 < c.thrustInRange[0][0].length; i2++) {
-					for (int j2 = 0; j2 < c.thrustInRange[0][0][0].length; j2++) {
+		for (int i = 0; i < c.thrustInRange.length; i++)
+			for (int j = 0; j < c.thrustInRange[0].length; j++)
+				for (int i2 = 0; i2 < c.thrustInRange[0][0].length; i2++)
+					for (int j2 = 0; j2 < c.thrustInRange[0][0][0].length; j2++)
 						this.thrustInRange[i][j][i2][j2] = Math.min(Math.abs(
 								c.thrustInRange[i][j][i2][j2] + rand.nextGaussian() * c.varianceThrust[i2][j2]), 200);
-					}
-				}
-			}
-		}
 
 		// Copia de varianzas
 		this.varianceDistance = new double[c.varianceDistance.length];
@@ -98,16 +71,19 @@ public class Chromosome implements Comparable<Chromosome> {
 	public Chromosome(Chromosome c1, Chromosome c2) {
 		Random rand = new Random();
 
+		// Cruce de varianza de distancias
 		this.varianceDistance = new double[c1.varianceDistance.length];
 		for (int i = 0; i < this.varianceDistance.length; i++)
 			if (Math.random() * 2 < 1) this.varianceDistance[i] = c1.varianceDistance[i];
 			else this.varianceDistance[i] = c2.varianceDistance[i];
 
+		// Cruce de varianza de ángulos
 		this.varianceAngle = new double[c1.varianceAngle.length];
 		for (int i = 0; i < this.varianceAngle.length; i++)
 			if (Math.random() * 2 < 1) this.varianceAngle[i] = c1.varianceAngle[i];
 			else this.varianceAngle[i] = c2.varianceAngle[i];
 
+		// Cruce de varianza de velocidades
 		this.varianceThrust = new double[c1.varianceThrust.length][c1.varianceThrust[0].length];
 		for (int i = 0; i < this.varianceThrust.length; i++)
 			for (int j = 0; j < this.varianceThrust[i].length; j++)
@@ -125,7 +101,7 @@ public class Chromosome implements Comparable<Chromosome> {
 					.abs(this.distanceRanges[1][i] + rand.nextGaussian() * this.varianceDistance[i]);
 		}
 
-		// Mutación del vector de angulos
+		// Mutación del vector de ángulos
 		this.angleRanges = new double[2][c1.angleRanges[0].length];
 		for (int i = 0; i < this.angleRanges[0].length; i++) {
 			this.angleRanges[0][i] = (c1.angleRanges[0][i] + c2.angleRanges[0][i]) / 2;
@@ -148,7 +124,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	/**
-	 * Crea un cormosoma a partir de la información de un CSV
+	 * Crea un cromosoma a partir de la información de un CSV
 	 *
 	 * @param path: ruta del fichero CSV
 	 */
@@ -159,27 +135,29 @@ public class Chromosome implements Comparable<Chromosome> {
 			FileReader fileReader = new FileReader(path);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
+			//Extrae las distancias del fichero
 			String distanceRangesLine = bufferedReader.readLine();
 			int numDistanceRanges = distanceRangesLine.split(",").length;
 			this.distanceRanges[0] = convertToDouble(distanceRangesLine.split(","));
 			distanceRangesLine = bufferedReader.readLine();
 			this.distanceRanges[1] = convertToDouble(distanceRangesLine.split(","));
 
+			// Extrae los ángulos del fichero
 			String angleRangesLine = bufferedReader.readLine();
 			int numAngleRanges = angleRangesLine.split(",").length;
 			this.angleRanges[0] = convertToDouble(angleRangesLine.split(","));
 			angleRangesLine = bufferedReader.readLine();
 			this.angleRanges[1] = convertToDouble(angleRangesLine.split(","));
 
+			// Extrae las velocidades del fichero
 			this.thrustInRange = new double[numDistanceRanges + 1][numAngleRanges + 1][numDistanceRanges
 					+ 1][numAngleRanges + 1];
-			for (int i = 0; i < numDistanceRanges + 1; i++) {
-				for (int j = 0; j < numAngleRanges + 1; j++) {
-					for (int i2 = 0; i2 < numDistanceRanges + 1; i2++) {
+			for (int i = 0; i < numDistanceRanges + 1; i++)
+				for (int j = 0; j < numAngleRanges + 1; j++)
+					for (int i2 = 0; i2 < numDistanceRanges + 1; i2++)
 						this.thrustInRange[i][j][i2] = convertToDouble(bufferedReader.readLine().split(","));
-					}
-				}
-			}
+
+			// Inicializa las varianzas.
 			this.varianceDistance = new double[numDistanceRanges];
 			this.varianceAngle = new double[numAngleRanges];
 			this.varianceThrust = new double[numDistanceRanges + 1][numAngleRanges + 1];
@@ -203,63 +181,24 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	/**
-	 * Inicializa los rangos de distancia, ángulo y velocidad aleatoriamente.
-	 */
-	/*
-	public void initializeRanges() {
-		Random rand = new Random();
-
-		// Inicialización del vector de rangos de distancias
-		double distanceMax = 4000.0;
-		for (int i = 0; i < this.distanceRanges.length; i++) {
-			this.distanceRanges[0][i] = (distanceMax) * rand.nextDouble();
-			this.distanceRanges[1][i] = (distanceMax) * rand.nextDouble();
-		}
-
-		// Inicialización del vector de rangos de angulos
-		double angleMax = 360.0;
-		for (int i = 0; i < this.angleRanges.length; i++) {
-			this.angleRanges[0][i] = (angleMax) * rand.nextDouble();
-			this.angleRanges[1][i] = (angleMax) * rand.nextDouble();
-		}
-
-		// Inicialización matriz de aceleración
-		double thrustMax = 200.0;
-		for (int i = 0; i < this.thrustInRange.length; i++) {
-			for (int j = 0; j < this.thrustInRange[i].length; j++) {
-				for (int i2 = 0; i2 < this.thrustInRange[i][j].length; i2++) {
-					for (int j2 = 0; j2 < this.thrustInRange[i][j][i2].length; j2++) {
-						this.thrustInRange[i][j][i2][j2] = (thrustMax) * rand.nextDouble();
-					}
-				}
-			}
-		}
-	}
-	 */
-
-	/**
 	 * Inicializa las varianzas aleatoriamente
 	 */
 	public void initializeVariances() {
-		// En orden: distancia, ángulo, aceleración
+		// En orden: distancia, ángulo, aceleración minima y máxima en la inicialización
 		double[][] stndDer = { { 1000, 3000 }, { 90, 360 }, { 50, 150 } };
 
 		// Inicialización vector de varianzas de distancias
-		for (int i = 0; i < this.varianceDistance.length; i++) {
+		for (int i = 0; i < this.varianceDistance.length; i++)
 			this.varianceDistance[i] = Math.random() * (stndDer[0][1] - stndDer[0][0]) + stndDer[0][0];
-		}
 
-		// Inicialización vector de varianzas de angulos
-		for (int i = 0; i < this.varianceAngle.length; i++) {
+		// Inicialización vector de varianzas de ángulos
+		for (int i = 0; i < this.varianceAngle.length; i++)
 			this.varianceAngle[i] = Math.random() * (stndDer[1][1] - stndDer[1][0]) + stndDer[1][0];
-		}
 
 		// Inicialización matriz de varianzas velocidades
-		for (int i = 0; i < this.varianceThrust.length; i++) {
-			for (int j = 0; j < this.varianceThrust[0].length; j++) {
+		for (int i = 0; i < this.varianceThrust.length; i++)
+			for (int j = 0; j < this.varianceThrust[0].length; j++)
 				this.varianceThrust[i][j] = Math.random() * (stndDer[2][1] - stndDer[2][0]) + stndDer[2][0];
-			}
-		}
 	}
 
 	/**
@@ -285,6 +224,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		try {
 			myWriter = new FileWriter(file);
 
+			// Guarda la información de las distancias
 			for (double[] distanceRange : this.distanceRanges) {
 				for (int i = 0; i < distanceRange.length; i++) {
 					if (i == distanceRange.length - 1) {
@@ -295,6 +235,7 @@ public class Chromosome implements Comparable<Chromosome> {
 				}
 			}
 
+			// Guarda la información de los ángulos
 			for (double[] angleRange : this.angleRanges) {
 				for (int i = 0; i < angleRange.length; i++) {
 					if (i == angleRange.length - 1) {
@@ -305,6 +246,7 @@ public class Chromosome implements Comparable<Chromosome> {
 				}
 			}
 
+			// Guarda la información de las velocidades
 			for (double[][][] doubles : this.thrustInRange) {
 				for (double[][] aDouble : doubles) {
 					for (double[] value : aDouble) {
