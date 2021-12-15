@@ -4,10 +4,10 @@ import com.codingame.gameengine.runner.dto.GameResult;
 public class SkeletonMain {
 
 	public static void main(String[] args) {
-		//trainOnePlusOne();
+		trainOnePlusOne();
 		//trainMuPlusLambda();
 		//test();
-		run();
+		//run();
 	}
 
 	/**
@@ -15,7 +15,7 @@ public class SkeletonMain {
 	 */
 	public static void trainOnePlusOne() {
 		OnePlusOne evolutivo = new OnePlusOne();
-		evolutivo.execute(100);
+		evolutivo.execute(200);
 		System.err.println(evolutivo.chromosome.fitness);
 	}
 

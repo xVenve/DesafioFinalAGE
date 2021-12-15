@@ -185,7 +185,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	 */
 	public void initializeVariances() {
 		// En orden: distancia, ángulo, aceleración minima y máxima en la inicialización
-		double[][] stndDer = { { 1000, 3000 }, { 90, 360 }, { 50, 150 } };
+		double[][] stndDer = { { 100, 1000 }, { 10, 180 }, { 10, 50 } };
 
 		// Inicialización vector de varianzas de distancias
 		for (int i = 0; i < this.varianceDistance.length; i++)
