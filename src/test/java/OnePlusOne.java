@@ -82,7 +82,7 @@ public class OnePlusOne {
 		c.writeChromosome("files/chromosome.csv");
 
 		// Números de los mapas sobre los que se va a entrenar
-		int [] numMapas = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+		int [] numMapas = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 		float totalFitness = 0;
 
 		for (int numMapa : numMapas) {
