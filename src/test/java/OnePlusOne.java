@@ -3,6 +3,8 @@ import java.util.Collections;
 import com.codingame.gameengine.runner.SoloGameRunner;
 import com.codingame.gameengine.runner.dto.GameResult;
 
+import java.util.Collections;
+
 public class OnePlusOne {
 
 	Chromosome chromosome;
@@ -72,9 +74,10 @@ public class OnePlusOne {
 	}
 
 	/**
-	 * Devuelve el fitness del individuo en función de los mapas sobre los que se entrene.
+	 * Devuelve el fitness del individuo en función de los mapas sobre los que se
+	 * entrene.
 	 *
-	 * @param c:	individuo a evaluar.
+	 * @param c: individuo a evaluar.
 	 * @return fitness: puntuación del individuo.
 	 */
 	private float getFitness(Chromosome c) {
@@ -82,7 +85,7 @@ public class OnePlusOne {
 		c.writeChromosome("files/chromosome.csv");
 
 		// Números de los mapas sobre los que se va a entrenar
-		int [] numMapas = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+		int[] numMapas = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
 		float totalFitness = 0;
 
 		for (int numMapa : numMapas) {

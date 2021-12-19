@@ -1,16 +1,18 @@
 import com.codingame.gameengine.runner.SoloGameRunner;
 import com.codingame.gameengine.runner.dto.GameResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class MuPlusLambda {
-
-    List<Chromosome> chromosomes = new ArrayList<>(); // Array de cromosomas que representa la población
 
     final int populationSize = 10; // Tamaño de la población
     final int lambda = 10; // Tamaño de la nueva población
     final double learningRate0 = 1 / Math.sqrt(2 * lambda);
     final double learningRate = 1 / Math.sqrt(2 * Math.sqrt(lambda));
+    List<Chromosome> chromosomes = new ArrayList<>(); // Array de cromosomas que representa la población
 
     /**
      * Inicialización aleatoria de una población con un solo cromosoma base.
@@ -33,34 +35,37 @@ public class MuPlusLambda {
 
     /**
      * Inicializa con la población del experimento anterior para continuar.
-     * Reduce la varianza para que simule un descenso previo. Si se empieza de 0 coge los originales
+     * Reduce la varianza para que simule un descenso previo. Si se empieza de 0
+     * coge los originales
      *
      * @param prevCicles: número de ciclos que simule que ha descendido la varianza.
      */
     public MuPlusLambda(int prevCicles) {
-        // Si los ciclos previos son 0, inicializa la población según unos ficheros originales
-        if(prevCicles==0)
-            for (int i=0; i<this.populationSize; i++){
-                Chromosome c = new Chromosome("files/Mu_chromosome0"+i+".csv");
+        // Si los ciclos previos son 0, inicializa la población según unos ficheros
+        // originales
+        if (prevCicles == 0)
+            for (int i = 0; i < this.populationSize; i++) {
+                Chromosome c = new Chromosome("files/Mu_chromosome0" + i + ".csv");
                 c.fitness = getFitness(c);
                 this.chromosomes.add(c);
             }
         // Si ya se ha hecho antes un experimento, se recoge la última población
         else
-            for (int i=0; i<this.populationSize; i++){
-                Chromosome c = new Chromosome("files/Mu_chromosome"+i+".csv");
+            for (int i = 0; i < this.populationSize; i++) {
+                Chromosome c = new Chromosome("files/Mu_chromosome" + i + ".csv");
                 c.fitness = getFitness(c);
                 this.chromosomes.add(c);
             }
 
-        // Se muta (decrementa) la varianza según los ciclos que tuvo el último experimento
-        for (int i=0; i<prevCicles; i++)
+        // Se muta (decrementa) la varianza según los ciclos que tuvo el último
+        // experimento
+        for (int i = 0; i < prevCicles; i++)
             mutateVariance();
     }
 
     /**
      * Ejecuta el entrenamiento un número de ciclos.
-     * 
+     *
      * @param cicles: ciclos que ejecuta el entrenamiento
      */
     public void execute(int cicles) {
@@ -99,7 +104,8 @@ public class MuPlusLambda {
             // Muta las varianzas
             this.mutateVariance();
 
-            // Escribe la población resultante, el mejor también lo escribe en "files/chromosome.csv"
+            // Escribe la población resultante, el mejor también lo escribe en
+            // "files/chromosome.csv"
             this.chromosomes.get(0).writeChromosome("files/chromosome.csv");
             for (int j = 0; j < this.chromosomes.size(); j++)
                 this.chromosomes.get(j).writeChromosome("files/Mu_chromosome" + j + ".csv");
@@ -128,14 +134,16 @@ public class MuPlusLambda {
             for (int j = 0; j < chromosome.varianceThrust.length; j++)
                 for (int k = 0; k < chromosome.varianceThrust[j].length; k++)
                     chromosome.varianceThrust[j][k] = (Math.pow(Math.E, rand.nextGaussian() * this.learningRate0))
-                            * chromosome.varianceThrust[j][k] * (Math.pow(Math.E, rand.nextGaussian() * this.learningRate));
+                            * chromosome.varianceThrust[j][k]
+                            * (Math.pow(Math.E, rand.nextGaussian() * this.learningRate));
         }
     }
 
     /**
-     * Devuelve el fitness del individuo en función de los mapas sobre los que se entrene.
+     * Devuelve el fitness del individuo en función de los mapas sobre los que se
+     * entrene.
      *
-     * @param c:	individuo a evaluar.
+     * @param c: individuo a evaluar.
      * @return fitness: puntuación del individuo.
      */
     private float getFitness(Chromosome c) {
@@ -143,7 +151,7 @@ public class MuPlusLambda {
         c.writeChromosome("files/chromosome.csv");
 
         // Números de los mapas sobre los que se va a entrenar
-        int [] numMapas = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+        int[] numMapas = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
         float totalFitness = 0;
 
         for (int numMapa : numMapas) {
