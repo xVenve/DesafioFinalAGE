@@ -4,9 +4,9 @@ import com.codingame.gameengine.runner.dto.GameResult;
 public class SkeletonMain {
 
 	public static void main(String[] args) {
-		trainOnePlusOne();
+		//trainOnePlusOne();
 		//trainMuPlusLambda();
-		//test();
+		test();
 		//run();
 	}
 
@@ -35,7 +35,7 @@ public class SkeletonMain {
 	public static void run() {
 		SoloGameRunner gameRunner = new SoloGameRunner();
 		gameRunner.setAgent(AgentEE.class);
-		gameRunner.setTestCase("test10.json");
+		gameRunner.setTestCase("test0.json");
 		gameRunner.start();
 	}
 
