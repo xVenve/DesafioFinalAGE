@@ -5,9 +5,9 @@ public class SkeletonMain {
 
 	public static void main(String[] args) {
 		trainOnePlusOne();
-		//trainMuPlusLambda();
-		//test();
-		//run();
+		// trainMuPlusLambda();
+		// test();
+		// run();
 	}
 
 	/**
@@ -23,7 +23,7 @@ public class SkeletonMain {
 	 * Entrena las soluciones con Mu+Lambda.
 	 */
 	public static void trainMuPlusLambda() {
-		//MuPlusLambda evolutivo = new MuPlusLambda();
+		// MuPlusLambda evolutivo = new MuPlusLambda();
 		MuPlusLambda evolutivo = new MuPlusLambda(0);
 		evolutivo.execute(20);
 		System.err.println(evolutivo.chromosomes.get(0).fitness);
@@ -40,7 +40,8 @@ public class SkeletonMain {
 	}
 
 	/**
-	 * Comprueba las puntuaciones de cada mapa y la media para "files/chromosome.csv"
+	 * Comprueba las puntuaciones de cada mapa y la media para
+	 * "files/chromosome.csv"
 	 */
 	public static void test() {
 		int numMapas = 15;
@@ -51,14 +52,14 @@ public class SkeletonMain {
 			float fitness = 1000;
 
 			try {
-			SoloGameRunner gameRunner = new SoloGameRunner();
-			gameRunner.setAgent(AgentEE.class);
-			gameRunner.setTestCase("test" + i + ".json");
-			GameResult gameRunnerResult = gameRunner.simulate();
+				SoloGameRunner gameRunner = new SoloGameRunner();
+				gameRunner.setAgent(AgentEE.class);
+				gameRunner.setTestCase("test" + i + ".json");
+				GameResult gameRunnerResult = gameRunner.simulate();
 
-			fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
-					gameRunnerResult.metadata.split(":")[1].length() - 3));
-			} catch (Exception e){
+				fitness = Float.parseFloat(gameRunnerResult.metadata.split(":")[1].substring(1,
+						gameRunnerResult.metadata.split(":")[1].length() - 3));
+			} catch (Exception e) {
 				System.err.println(e);
 			}
 

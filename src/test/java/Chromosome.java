@@ -18,7 +18,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	/**
 	 * Crea un individuo a partir del padre y muta.
 	 *
-	 * @param c:	cromosoma del padre
+	 * @param c: cromosoma del padre
 	 */
 	public Chromosome(Chromosome c) {
 		Random rand = new Random();
@@ -118,8 +118,11 @@ public class Chromosome implements Comparable<Chromosome> {
 			for (int j = 0; j < this.thrustInRange[0].length; j++)
 				for (int i2 = 0; i2 < this.thrustInRange[0][0].length; i2++)
 					for (int j2 = 0; j2 < this.thrustInRange[0][0][0].length; j2++) {
-						this.thrustInRange[i][j][i2][j2] = (c1.thrustInRange[i][j][i2][j2] + c2.thrustInRange[i][j][i2][j2]) / 2;
-						this.thrustInRange[i][j][i2][j2] = Math.min(Math.abs(this.thrustInRange[i][j][i2][j2] + rand.nextGaussian() * this.varianceThrust[i2][j2]), 200);
+						this.thrustInRange[i][j][i2][j2] = (c1.thrustInRange[i][j][i2][j2]
+								+ c2.thrustInRange[i][j][i2][j2]) / 2;
+						this.thrustInRange[i][j][i2][j2] = Math.min(Math.abs(
+								this.thrustInRange[i][j][i2][j2] + rand.nextGaussian() * this.varianceThrust[i2][j2]),
+								200);
 					}
 	}
 
@@ -135,7 +138,7 @@ public class Chromosome implements Comparable<Chromosome> {
 			FileReader fileReader = new FileReader(path);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-			//Extrae las distancias del fichero
+			// Extrae las distancias del fichero
 			String distanceRangesLine = bufferedReader.readLine();
 			int numDistanceRanges = distanceRangesLine.split(",").length;
 			this.distanceRanges[0] = convertToDouble(distanceRangesLine.split(","));

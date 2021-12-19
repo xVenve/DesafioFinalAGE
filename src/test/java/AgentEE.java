@@ -4,9 +4,11 @@ import java.util.Scanner;
 
 public class AgentEE {
 	/**
-	 * Este agente opera según el cromosoma de "files/chromosome.csv", la distancia al siguiente punto
-	 * y al siguiente, y el ángulo al siguiente punto y al siguiente. La dirección será el siguiente punto
-	 * y la velocidad depende de las distancias y ángulos.
+	 * Este agente opera según el cromosoma de "files/chromosome.csv", la distancia
+	 * al siguiente punto y al siguiente, y el ángulo al siguiente punto y al
+	 * siguiente. La dirección será el siguiente punto y la velocidad depende de las
+	 * distancias y ángulos.
+	 * 
 	 * @param args: -
 	 */
 	public static void main(String[] args) {
@@ -68,9 +70,9 @@ public class AgentEE {
 		/**
 		 * Calcula el ángulo relativo de la nave con el siguiente punto.
 		 * 
-		 * @param angle:	ángulo que tiene la nave respecto al eje.
-		 * @param p:		punto con coordenadas X e Y al que se tiene que dirigir la
-		 *               	nave.
+		 * @param angle: ángulo que tiene la nave respecto al eje.
+		 * @param p:     punto con coordenadas X e Y al que se tiene que dirigir la
+		 *               nave.
 		 * @return relAngle: diferencia entre el ángulo de la nave y el punto.
 		 */
 		public double relativeAngle(int angle, Point p) {
@@ -104,11 +106,11 @@ public class AgentEE {
 		/**
 		 * Decide la velocidad a tomar según la distancia y el ángulo.
 		 *
-		 * @param distance:		distancia al siguiente punto.
-		 * @param distance2:	distancia al segundo siguiente punto.
-		 * @param angle:		ángulo relativo de la nave con el siguiente punto.
-		 * @param angle2:		ángulo relativo de la nave con el segundo siguiente punto.
-		 * @param solution:		cromosoma usado para la decisión.
+		 * @param distance:  distancia al siguiente punto.
+		 * @param distance2: distancia al segundo siguiente punto.
+		 * @param angle:     ángulo relativo de la nave con el siguiente punto.
+		 * @param angle2:    ángulo relativo de la nave con el segundo siguiente punto.
+		 * @param solution:  cromosoma usado para la decisión.
 		 * @return thrust: la velocidad que llevará la nave.
 		 */
 		public double getThrust(double distance, double distance2, double angle, double angle2, Chromosome solution) {
@@ -127,7 +129,7 @@ public class AgentEE {
 								double dr2 = 160000;
 								if (i2 < solution.distanceRanges[1].length) dr2 = solution.distanceRanges[1][i2];
 								if (distance2 < dr2)
-									//Para cada ángulo del segundo punto.
+									// Para cada ángulo del segundo punto.
 									for (int j2 = 0; j2 <= solution.angleRanges[0].length; j2++) {
 										double ag2 = 360;
 										if (j2 < solution.angleRanges[0].length) ag2 = solution.angleRanges[0][j2];
