@@ -9,11 +9,16 @@ import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
 
 public class Referee extends AbstractReferee implements IPlayerManager {
-    @Inject private SoloGameManager<Player> gameManager;
-    @Inject private GraphicEntityModule graphicEntityModule;
-    @Inject private EndScreenModule endScreenModule;
-    @Inject private TooltipModule tooltipModule;
-    @Inject private DebugModule debugModule;
+    @Inject
+    private SoloGameManager<Player> gameManager;
+    @Inject
+    private GraphicEntityModule graphicEntityModule;
+    @Inject
+    private EndScreenModule endScreenModule;
+    @Inject
+    private TooltipModule tooltipModule;
+    @Inject
+    private DebugModule debugModule;
     private Game game;
     private ViewController viewController;
     private double score = 1000;
@@ -44,22 +49,20 @@ public class Referee extends AbstractReferee implements IPlayerManager {
 
     @Override
     public void onEnd() {
-        endScreenModule.setScores(new int[]{(int)score}, new String[]{String.valueOf(score)});
+        endScreenModule.setScores(new int[]{(int) score}, new String[]{String.valueOf(score)});
         endScreenModule.setTitleRankingsSprite("logo.png");
     }
 
     @Override
     public void gameTurn(int turn) {
-        try{
+        try {
             game.onRound();
             viewController.onRound();
-        }
-        catch (TimeoutException e){
+        } catch (TimeoutException e) {
             endGame(false, 1000);
             addGameSummary("Timeout");
             addTooltip("Timeout");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             endGame(false, 1000);
             addGameSummary(e.getMessage());
             addTooltip("Provided invalid input. Check Summary for details.");
@@ -73,7 +76,7 @@ public class Referee extends AbstractReferee implements IPlayerManager {
 
     @Override
     public void sendData(String[] lines) {
-        for(String line : lines){
+        for (String line : lines) {
             gameManager.getPlayer().sendInputLine(line);
         }
     }
@@ -87,7 +90,7 @@ public class Referee extends AbstractReferee implements IPlayerManager {
     public void endGame(boolean won, double score) {
         this.score = score;
         gameManager.putMetadata("time", String.valueOf(score));
-        if(won) gameManager.winGame();
+        if (won) gameManager.winGame();
         else gameManager.loseGame();
     }
 

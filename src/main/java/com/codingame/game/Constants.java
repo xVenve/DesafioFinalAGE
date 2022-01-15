@@ -8,6 +8,6 @@ public class Constants {
     public static final double CheckpointRadius = 600;
     public final static Collision NULL_COLLISION = new Collision(2.0);
     public static final double MAX_ROTATION_PER_TURN = Math.PI / 10;
-    public static int CAR_MAX_THRUST = 200;
     public static final double CAR_FRICTION = 0.15;
+    public static int CAR_MAX_THRUST = 200;
 }

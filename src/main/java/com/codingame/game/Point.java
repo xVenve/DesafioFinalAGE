@@ -14,9 +14,9 @@ public class Point {
         return Math.sqrt((this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y));
     }
 
-    public double getAngle(Point p2){
-        double dx = p2.x-x;
-        double dy = p2.y-y;
+    public double getAngle(Point p2) {
+        double dx = p2.x - x;
+        double dy = p2.y - y;
         return Math.atan2(dy, dx);
     }
 
@@ -42,7 +42,7 @@ public class Point {
         this.y += dy * coef;
     }
 
-    Point getPoint(Point target, double distance){
+    Point getPoint(Point target, double distance) {
         double d = distance(target);
 
         if (d < Constants.EPSILON) {
@@ -62,7 +62,7 @@ public class Point {
         return p != this && distance(p) <= range;
     }
 
-    public Point clonePoint(){
+    public Point clonePoint() {
         return new Point(x, y);
     }
 
@@ -85,7 +85,6 @@ public class Point {
         if (getClass() != obj.getClass()) return false;
         Point other = (Point) obj;
         if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x)) return false;
-        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y)) return false;
-        return true;
+        return Double.doubleToLongBits(y) == Double.doubleToLongBits(other.y);
     }
 }
